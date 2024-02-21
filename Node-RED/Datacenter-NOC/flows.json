@@ -1,0 +1,295 @@
+[
+    {
+        "id": "d2ac25c12789408b",
+        "type": "tab",
+        "label": "Flujo 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "2875bb530510466b",
+        "type": "inject",
+        "z": "d2ac25c12789408b",
+        "name": "Office Temperature 28°",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "datecenter/noc/temperatura",
+        "payload": "28",
+        "payloadType": "num",
+        "x": 200,
+        "y": 100,
+        "wires": [
+            [
+                "0b8d042f149802d8"
+            ]
+        ]
+    },
+    {
+        "id": "0b8d042f149802d8",
+        "type": "mqtt out",
+        "z": "d2ac25c12789408b",
+        "name": "",
+        "topic": "datacenter/noc/temperatura",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "9bbda468a71ba605",
+        "x": 500,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "d89e6762cfc1bd80",
+        "type": "mqtt in",
+        "z": "d2ac25c12789408b",
+        "name": "",
+        "topic": "datacenter/noc",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "9bbda468a71ba605",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 180,
+        "y": 240,
+        "wires": [
+            [
+                "fd5bb62955779369"
+            ]
+        ]
+    },
+    {
+        "id": "fd5bb62955779369",
+        "type": "debug",
+        "z": "d2ac25c12789408b",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 470,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "4be68be18071651a",
+        "type": "mqtt out",
+        "z": "d2ac25c12789408b",
+        "name": "",
+        "topic": "datacenter/noc/luz/status",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "9bbda468a71ba605",
+        "x": 510,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "01db51f2ae69bc3b",
+        "type": "inject",
+        "z": "d2ac25c12789408b",
+        "name": "Luz NOC ON",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "datacenter/noc/luz/status",
+        "payload": "ON",
+        "payloadType": "str",
+        "x": 170,
+        "y": 400,
+        "wires": [
+            [
+                "4be68be18071651a"
+            ]
+        ]
+    },
+    {
+        "id": "3a577c3e10377b91",
+        "type": "inject",
+        "z": "d2ac25c12789408b",
+        "name": "Luz NOC OFF",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "datacenter/noc/luz/status",
+        "payload": "OFF",
+        "payloadType": "str",
+        "x": 170,
+        "y": 480,
+        "wires": [
+            [
+                "4be68be18071651a"
+            ]
+        ]
+    },
+    {
+        "id": "35e3d17277af1d32",
+        "type": "mqtt in",
+        "z": "d2ac25c12789408b",
+        "name": "Comando luz NOC desde HA",
+        "topic": "datacenter/noc/luz/switch",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "9bbda468a71ba605",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 180,
+        "y": 700,
+        "wires": [
+            [
+                "8254349d6ca32cf7",
+                "a8c0b7331647a4e0"
+            ]
+        ]
+    },
+    {
+        "id": "8254349d6ca32cf7",
+        "type": "change",
+        "z": "d2ac25c12789408b",
+        "name": "Guarda en contexto",
+        "rules": [
+            {
+                "t": "set",
+                "p": "luz.noc",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 430,
+        "y": 700,
+        "wires": [
+            [
+                "20a4980e624b787a"
+            ]
+        ]
+    },
+    {
+        "id": "20a4980e624b787a",
+        "type": "debug",
+        "z": "d2ac25c12789408b",
+        "name": "Luz noc",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "a8c0b7331647a4e0",
+        "type": "change",
+        "z": "d2ac25c12789408b",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "datacenter/noc/luz/status",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 600,
+        "wires": [
+            [
+                "4be68be18071651a"
+            ]
+        ]
+    },
+    {
+        "id": "9bbda468a71ba605",
+        "type": "mqtt-broker",
+        "name": "Mosquitto-HA NOC-PC4",
+        "broker": "170.10.10.68",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
