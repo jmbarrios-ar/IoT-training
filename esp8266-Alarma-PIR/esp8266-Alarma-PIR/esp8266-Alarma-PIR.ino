@@ -6,11 +6,12 @@ int val = LOW;
  
 void setup() 
 {
-  pinMode(PIRPin, INPUT_PULLUP);
+  //pinMode(PIRPin, INPUT_PULLUP);
+  pinMode(PIRPin, INPUT);
   pinMode(LEDPin, OUTPUT);
   Serial.begin(115200);
 
-  delay(60*1000);
+  delay(10*1000);
 }
  
 void loop(){
@@ -19,8 +20,9 @@ void loop(){
     Serial.println("Movimiento detectado!");
     digitalWrite(LEDPin, HIGH);
     delay(1000);
-    //digitalWrite(LEDPin, LOW);
-    //delay(50);
+    digitalWrite(LEDPin, LOW);
+    int val = LOW;
+    delay(2000);
     }
   else {
     digitalWrite(LEDPin, LOW);
