@@ -26,7 +26,7 @@ void loop(){
           {
               Serial.print(F("Card UID:"));
               for (byte i = 0; i < mfrc522.uid.size; i++) {
-                Serial.print(mfrc522.uid.uidByte[i] < 0x10 ?);
+                Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
                 Serial.print(mfrc522.uid.uidByte[i], HEX);
                 ActualUID[i]=mfrc522.uid.uidByte[i];
               }
