@@ -6,7 +6,10 @@
 
 MFRC522 mfrc522(SS_PIN, RST_PIN); // Crear una instancia del objeto MFRC522
 
+int led = 2; //linea agregada de otro código
+
 void setup() {
+  pinMode(led, OUTPUT);   //Led indicador - línea agregada desde otro código
   Serial.begin(115200); // Inicializar la comunicación serie
   SPI.begin();          // Inicializar la interfaz SPI
   mfrc522.PCD_Init();   // Inicializar el lector MFRC522

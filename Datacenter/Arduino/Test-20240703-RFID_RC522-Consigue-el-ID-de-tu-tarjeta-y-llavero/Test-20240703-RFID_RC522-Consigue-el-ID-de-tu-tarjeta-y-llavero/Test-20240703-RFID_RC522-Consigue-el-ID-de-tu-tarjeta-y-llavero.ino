@@ -14,10 +14,11 @@ int led = 2;
 void setup() {
   // Definimos led como salida
   pinMode(led, OUTPUT);
-  Serial.begin(9600);
+  Serial.begin(115200);
   //Habilitamos SPI para la comunicacion MOSI, MISO, SCK Y SS(SDA)
   SPI.begin();
   mfrc522.PCD_Init();
+  Serial.println("Lector RFID listo. Por favor, acerque una tarjeta."); //linea agregada desde otro código
 }
 
 void loop() {
@@ -44,5 +45,6 @@ void loop() {
   Serial.println();
   delay(1000);
   
-
+  // Poner la tarjeta en modo espera - linea agregada desde otro código
+  mfrc522.PICC_HaltA();
 }
