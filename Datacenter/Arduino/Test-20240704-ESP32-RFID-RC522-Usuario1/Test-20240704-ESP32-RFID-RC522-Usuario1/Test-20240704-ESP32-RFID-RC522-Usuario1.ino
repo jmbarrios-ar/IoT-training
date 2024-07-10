@@ -21,8 +21,8 @@ byte Usuario1[4]= {0x6D, 0X0C, 0XEF, 0X2B};
 //byte Usuario2[4]= {0xC1, 0X2F, 0XD6, 0X0E};  //en caso e requerir mas usuarios
 void loop(){
   if ( ! mfrc522.PICC_IsNewCardPresent())
-        {
-          if ( mfrc522.PICC_ReadCardSerial())
+        { ( mfrc522.PICC_ReadCardSerial())
+          if
           {
               Serial.print(F("Card UID:"));
               for (byte i = 0; i < mfrc522.uid.size; i++) {
