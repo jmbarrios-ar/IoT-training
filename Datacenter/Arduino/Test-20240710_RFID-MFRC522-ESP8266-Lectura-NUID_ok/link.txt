@@ -1,0 +1,2 @@
+https://www.aranacorp.com/es/uso-de-un-modulo-rfid-con-un-esp8266/
+https://github.com/miguelbalboa/rfid
