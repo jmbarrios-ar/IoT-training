@@ -1,8 +1,8 @@
 #include <SPI.h>
 #include <MFRC522.h>
 
-#define SS_PIN 5   // Pin de selección de esclavo (SDA)
-#define RST_PIN 27 // Pin de reset
+#define SS_PIN 9   // Pin de selección de esclavo (SDA)
+#define RST_PIN 10 // Pin de reset
 
 MFRC522 mfrc522(SS_PIN, RST_PIN); // Crear una instancia del objeto MFRC522
 
@@ -10,7 +10,7 @@ int led = 2; //linea agregada de otro código
 
 void setup() {
   pinMode(led, OUTPUT);   //Led indicador - línea agregada desde otro código
-  Serial.begin(115200); // Inicializar la comunicación serie
+  Serial.begin(9600); // Inicializar la comunicación serie
   SPI.begin();          // Inicializar la interfaz SPI
   mfrc522.PCD_Init();   // Inicializar el lector MFRC522
   Serial.println("Lector RFID listo. Por favor, acerque una tarjeta.");
