@@ -3,6 +3,7 @@
 //#define RST_PIN         9          // Configurable, see typical pin layout above
 //#define SS_PIN          10         // Configurable, see typical pin layout above
 #define RST_PIN D0          // Configurable, see typical pin layout above
+#define SS_PIN D8         // Configurable, see typical pin layout above
 MFRC522 rfid(SS_PIN, RST_PIN);  // Create MFRC522 instance
 
 byte LecturaUID[4];
