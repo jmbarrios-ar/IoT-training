@@ -9,9 +9,10 @@ MFRC522::MIFARE_Key key;
 byte LecturaUID[4];
 byte Usuario1[4]= {0xE2, 0x1F, 0XF2, 0XC5};  //Codigo UID Tarjeta
 byte Usuario2[4]= {0xF4, 0x95, 0X9A, 0XEB};  //Codigo UID Llavero
-
+//#define LED_PIN D1
 void setup() {
 	Serial.begin(115200);		// Initialize serial communications with the PC
+  //pinMode(LED_PIN, OUTPUT);
 	SPI.begin();			// Init SPI bus
 	rfid.PCD_Init();
   Serial.println("Listo");
