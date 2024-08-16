@@ -1,0 +1,3 @@
+https://www.micropic.es/instalacion-de-mqtt-en-home-assistant-con-docker-portainer-y-conexion-de-un-esp32-paso-a-paso/
+
+https://www.youtube.com/watch?v=402lRj6LE-0&t=937s
