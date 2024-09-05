@@ -2,15 +2,21 @@
 #include <PubSubClient.h>
 
 // Configuración de la red WiFi
-const char* ssid = "datacenter";
-const char* password = "NOv22$1nicI0";
+//const char* ssid = "datacenter";
+//const char* password = "NOv22$1nicI0";
+const char *ssid = "247IASbros2.4";
+const char *password = "T3reKByo2023$";
 
 // Configuración del servidor MQTT
-const char* mqtt_server = "172.16.16.27";
+//const char* mqtt_server = "172.16.16.27";
+//const int mqtt_port = 1883;
+//const char* user = "adminmqtt"; // Reemplaza con tu usuario
+//const char* pass = "Ia$247"; // Reemplaza con tu contraseña
+const char *mqtt_server = "45.186.124.70";
 const int mqtt_port = 1883;
-const char* user = "adminmqtt"; // Reemplaza con tu usuario
-const char* pass = "Ia$247"; // Reemplaza con tu contraseña
-const char* topic = "casa/led/estado"; // Reemplaza con el nombre del tópico
+const char *user = "adminmqtt"; // Reemplaza con tu usuario
+const char *pass = "Ia$247"; // Reemplaza con tu contraseña
+const char *topic = "casa/led/estado"; // Reemplaza con el nombre del tópico
 
 // Cliente WiFi y cliente MQTT
 WiFiClient espClient;

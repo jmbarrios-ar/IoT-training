@@ -25,10 +25,10 @@
 
 const char *ssid = "247IASbros2.4";
 const char *password = "T3reKByo2023$";
-const char *mqtt_server = "45.186.124.70";
+const char *mqtt_server = "192.168.24.150";
 const int mqtt_port = 1883;
-const char *mqtt_user = "admin";
-const char *mqtt_pass = "Ia$247forever";
+const char *mqtt_user = "usermqtt";
+const char *mqtt_pass = "Ia$247";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -107,7 +107,7 @@ void reconnect() {
 
 void setup() {
   pinMode(BUILTIN_LED, OUTPUT);     // Initialize the BUILTIN_LED pin as an output
-  Serial.begin(115200);
+  Serial.begin(9600);
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
