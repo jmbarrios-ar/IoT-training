@@ -97,9 +97,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
   incoming.trim();
   Serial.println("Mensaje -> " + incoming);
 
-  if ( incoming == "on") {
+  if ( incoming == "ON") {
     digitalWrite(lednaranja, HIGH);
-    } if ( incoming == "off") {
+    } if ( incoming == "OFF") {
       digitalWrite(lednaranja, LOW);
     }  
 }
@@ -114,8 +114,11 @@ void reconnect() {
     if (client.connect(clientId.c_str(),mqtt_user,mqtt_pass)) {
       Serial.println("Conectado!");
       // Nos suscribimos
-      client.subscribe("casa/led/estado"); // Suscripción al tópico
-      client.subscribe("casa/pulsador/estado"); // Suscripción al tópico
+       client.subscribe("casa/temperatura"); // Suscripción al tópico
+      client.subscribe("casa/luces/1/estado"); // Suscripción al tópico
+      client.subscribe("casa/luces/1/comando"); // Suscripción al tópico
+      client.subscribe("casa/luces/2/estado"); // Suscripción al tópico
+      client.subscribe("casa/luces/2/comando"); // Suscripción al tópico
     } else {
       Serial.print("falló :( con error -> ");
       Serial.print(client.state());
