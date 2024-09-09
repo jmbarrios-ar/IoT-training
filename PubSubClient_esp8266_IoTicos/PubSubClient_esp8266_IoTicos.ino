@@ -1,20 +1,20 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
-//const char* ssid = "datacenter";
-//const char* password = "NOv22$1nicI0";
-const char* ssid = "247IASbros2.4";
-const char* password = "T3reKByo2023$";
+const char* ssid = "datacenter";
+const char* password = "NOv22$1nicI0";
+//const char* ssid = "247IASbros2.4";
+//const char* password = "T3reKByo2023$";
 
 //const char *mqtt_server = "45.186.124.70"; //IP publica
-//const char *mqtt_server = "172.16.16.27";  //IP privada
-//const int mqtt_port = 1883;
-//const char *mqtt_user = "adminmqtt";
-//const char *mqtt_pass = "Ia$247";
-const char *mqtt_server = "192.168.24.150";
+const char *mqtt_server = "172.16.16.27";  //IP privada
 const int mqtt_port = 1883;
-const char *mqtt_user = "usermqtt";
+const char *mqtt_user = "adminmqtt";
 const char *mqtt_pass = "Ia$247";
+//const char *mqtt_server = "192.168.24.150";
+//const int mqtt_port = 1883;
+//const char *mqtt_user = "usermqtt";
+//const char *mqtt_pass = "Ia$247";
 
 WiFiClient espClient;
 PubSubClient client(espClient);

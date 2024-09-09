@@ -9,6 +9,8 @@ const char *mqtt_server = "172.16.16.27";
 const int mqtt_port = 1883;
 const char *mqtt_user = "adminmqtt";
 const char *mqtt_pass = "Ia$247";
+const char *topic1 = "datacenter/noc/luz/1/status";
+const char *topic2 = "datacenter/noc/luz/2/status";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -16,7 +18,8 @@ PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
 
-const int lednaranja = D6; //pin del led naranja
+const int ledrojo = D6; //pin del led rojo
+const int ledverde = D7; //pin del led verde
 
 int valor_prueba = 0;
 
@@ -28,7 +31,8 @@ void callback(char* topic, byte* payload, unsigned int length);
 void reconnect();
 
 void setup() {
-  pinMode(lednaranja, OUTPUT);
+  pinMode(ledrojo, OUTPUT);
+  pinMode(ledverde, OUTPUT);
   Serial.begin(9600);
   randomSeed(micros());
   setup_wifi();
@@ -85,17 +89,33 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print(topic);
   Serial.println("");
   // Aquí puedes agregar código para procesar el mensaje recibido
-  for (int i = 0; i < length; i++) {
-    incoming += (char)payload[i];
-  }
-  incoming.trim();
-  Serial.println("Mensaje -> " + incoming);
+  //if ( topic == topic1 ) {
+    for (int i = 0; i < length; i++) {
+        incoming += (char)payload[i];
+    }
+    incoming.trim();
+    Serial.println("Mensaje -> " + incoming);
 
-  if ( incoming == "ON") {
-    digitalWrite(lednaranja, HIGH);
-    } if ( incoming == "OFF") {
-      digitalWrite(lednaranja, LOW);
-    }  
+    if ( incoming == "ON") {
+      digitalWrite(ledrojo, HIGH);
+      } if ( incoming == "OFF") {
+          digitalWrite(ledrojo, LOW);
+        } 
+  /*} else if ( topic == topic2 ) {
+      for (int i = 0; i < length; i++) {
+      incoming += (char)payload[i];
+      }
+      incoming.trim();
+  
+      Serial.println("Mensaje -> " + incoming);
+
+      if ( incoming == "ON") {
+        digitalWrite(ledverde, HIGH);
+        } if ( incoming == "OFF") {
+          digitalWrite(ledverde, LOW);
+        } 
+    } */
+   
 }
 
 void reconnect() {
@@ -108,10 +128,11 @@ void reconnect() {
     if (client.connect(clientId.c_str(),mqtt_user,mqtt_pass)) {
       Serial.println("Conectado!");
       // Nos suscribimos
-      client.subscribe("casa/led/estado"); // Suscripción al tópico
-      client.subscribe("casa/pulsador/estado"); // Suscripción al tópico
-      client.subscribe("datacenter/noc/luz/switch"); // Suscripción al tópico
-      client.subscribe("datacenter/noc/luz/status"); // Suscripción al tópico
+      client.subscribe("datacenter/noc/luz/1/status"); // Suscripción al tópico
+      client.subscribe("datacenter/noc/luz/1/command"); // Suscripción al tópico
+      client.subscribe("datacenter/noc/luz/2/status"); // Suscripción al tópico
+      client.subscribe("datacenter/noc/luz/2/command"); // Suscripción al tópico
+      client.subscribe("datacenter/noc/temperatura"); // Suscripción al tópico
     } else {
       Serial.print("falló :( con error -> ");
       Serial.print(client.state());
