@@ -22,7 +22,7 @@ PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
 
-const int lednaranja = D6; //pin del led naranja
+const int ledrojo = D6; //pin del led rojo
 
 int valor_prueba = 0;
 
@@ -34,7 +34,7 @@ void callback(char* topic, byte* payload, unsigned int length);
 void reconnect();
 
 void setup() {
-  pinMode(lednaranja, OUTPUT);
+  pinMode(ledrojo, OUTPUT);
   Serial.begin(9600);
   randomSeed(micros());
   setup_wifi();
@@ -98,9 +98,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.println("Mensaje -> " + incoming);
 
   if ( incoming == "ON") {
-    digitalWrite(lednaranja, HIGH);
+    digitalWrite(ledrojo, HIGH);
     } if ( incoming == "OFF") {
-      digitalWrite(lednaranja, LOW);
+      digitalWrite(ledrojo, LOW);
     }  
 }
 
@@ -117,8 +117,8 @@ void reconnect() {
        client.subscribe("casa/temperatura"); // Suscripción al tópico
       client.subscribe("casa/luces/1/estado"); // Suscripción al tópico
       client.subscribe("casa/luces/1/comando"); // Suscripción al tópico
-      client.subscribe("casa/luces/2/estado"); // Suscripción al tópico
-      client.subscribe("casa/luces/2/comando"); // Suscripción al tópico
+      //client.subscribe("casa/luces/2/estado"); // Suscripción al tópico
+      //client.subscribe("casa/luces/2/comando"); // Suscripción al tópico
     } else {
       Serial.print("falló :( con error -> ");
       Serial.print(client.state());
