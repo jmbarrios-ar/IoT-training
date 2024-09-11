@@ -1,14 +1,22 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
-// Configuración de WiFi
-const char* ssid = "247IASbros2.4";
-const char* password = "T3reKByo2023$";
-
+// Configuración de WiFi Barrio NORTE
+/*const char* ssid = "247IASbros2.4";
+const char* password = "T3reKByo2023$";*/
 // Configuración del servidor MQTT
-const char *mqtt_server = "192.168.24.150";
+/*const char *mqtt_server = "192.168.24.150";
 const int mqtt_port = 1883;
 const char *mqtt_user = "usermqtt";
+const char *mqtt_pass = "Ia$247";*/
+
+// Configuración de WiFi Datacenter
+const char* ssid = "datacenter";
+const char* password = "NOv22$1nicI0";
+//const char *mqtt_server = "45.186.124.70";
+const char *mqtt_server = "172.16.16.27";
+const int mqtt_port = 1883;
+const char *mqtt_user = "adminmqtt";
 const char *mqtt_pass = "Ia$247";
 
 // Pin del pulsador
@@ -50,11 +58,13 @@ void loop() {
   if (currentButtonState != lastButtonState) {
     lastButtonState = currentButtonState;
     if (currentButtonState == HIGH) { // El botón se presionó
-      client.publish("casa/pulsador/estado", "ON");
+      //client.publish("casa/pulsador/estado", "ON"); // Barrio NORTE
+      client.publish("datacenter/grupo/estado", "ON"); // Datacenter
       Serial.println("Botón presionado: Publicando ON");
       digitalWrite(led2rojo, HIGH);
     } else { // El botón se soltó
-      client.publish("casa/pulsador/estado", "OFF");
+      //client.publish("casa/pulsador/estado", "OFF"); // Barrio NORTE
+      client.publish("datacenter/grupo/estado", "OFF"); // Datacenter
       Serial.println("Botón soltado: Publicando OFF");
       digitalWrite(led2rojo, LOW);
     }
@@ -121,7 +131,8 @@ void reconnect() {
       Serial.println("Conectado!");
       
       // Suscribirse al tópico
-      client.subscribe("casa/pulsador/estado");
+      //client.subscribe("casa/pulsador/estado");    // Barrio NORTE
+      client.subscribe("datacenter/grupo/estado");  // Datacenter
     } else {
       Serial.print("Falló la conexión, rc=");
       Serial.print(client.state());
