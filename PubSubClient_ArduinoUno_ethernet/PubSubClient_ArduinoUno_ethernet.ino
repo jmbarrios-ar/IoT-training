@@ -12,27 +12,26 @@ void(* Resetea) (void) = 0;//Funcíon Reset por soft para el arduino (como si ap
 // ETHERNET config.
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };//Dirección MAC de nuestro módulo ethernet
 //char server[] = "123.123.123.204"; //Cambiar por la url del servidor a usar   
-//IPAddress ip(192,168,1,6); //Asingamos la IP al Arduino
-IPAddress ip(192, 168, 24, 151); // IP en Barrio NORTE
-//IPAddress gateway(192, 168, 1, 1); // IP en Datacenter
-IPAddress gateway(192, 168, 24, 1); //Pasarela en Barrio NORTE
-//IPAddress subnet(255, 255, 255, 0); //Pasarela en Datacenter
-IPAddress subnet(255, 255, 255, 0);  //Mascara en Barrio NORTE
-//IPAddress subnet(255, 255, 254, 0);  //Mascara en Datacenter
-IPAddress dnServer(192, 168, 100, 1);  //DNS en Barrio NORTE
-//IPAddress dnServer(123, 123, 123, 8);  //DNS en Datacenter
+//IPAddress ip(192, 168, 24, 151); // IP en Barrio NORTE
+IPAddress ip(170, 10, 10, 38); // IP en Datacenter
+//IPAddress gateway(192, 168, 24, 1); //Pasarela en Barrio NORTE
+IPAddress gateway(170, 10, 10, 1); //Pasarela en Datacenter
+//IPAddress subnet(255, 255, 255, 0);  //Mascara en Barrio NORTE
+IPAddress subnet(255, 255, 255, 0);  //Mascara en Datacenter
+//IPAddress dnServer(192, 168, 100, 1);  //DNS en Barrio NORTE
+IPAddress dnServer(8, 8, 8, 8);  //DNS en Datacenter
 
 // Configuración del servidor MQTT en Barrio NORTE
-const char *mqtt_server = "192.168.24.150";
+/*const char *mqtt_server = "192.168.24.150";
 const int mqtt_port = 1883;
 const char *mqtt_user = "usermqtt";
-const char *mqtt_pass = "Ia$247";
+const char *mqtt_pass = "Ia$247";*/
 // Configuración del servidor MQTT en Datacenter
 //const char *mqtt_server = "45.186.124.70";
-/*const char *mqtt_server = "172.16.16.27";
+const char *mqtt_server = "172.16.16.27";
 const int mqtt_port = 1883;
 const char *mqtt_user = "adminmqtt";
-const char *mqtt_pass = "Ia$247";*/
+const char *mqtt_pass = "Ia$247";
 
 // Config relé detector de corte de energía
 int ledrojo = 4;  // Led indicador de corte energía
@@ -84,8 +83,8 @@ void loop() {
     digitalWrite(ledrojo, HIGH);  //LED ON
     if (lastReleState == LOW)  {  //si previamente estaba apagado
       Serial.println("Grupo Electrógeno encendido: Publicando ON");
-      client.publish("casa/pulsador/estado", "ON"); // Barrio NORTE
-      //client.publish("datacenter/grupo/estado", "ON"); // Datacenter
+      //client.publish("casa/pulsador/estado", "ON"); // Barrio NORTE
+      client.publish("datacenter/grupo/estado", "ON"); // Datacenter
       lastReleState = HIGH;
     }
   }
@@ -93,8 +92,8 @@ void loop() {
     digitalWrite(ledrojo, LOW); // LED OFF
     if (lastReleState == HIGH)   {  //si previamente estaba encendido
       Serial.println("Grupo Electrógeno apagado. Publicando OFF");
-      client.publish("casa/pulsador/estado", "OFF"); // Barrio NORTE
-      //client.publish("datacenter/grupo/estado", "OFF"); // Datacenter
+      //client.publish("casa/pulsador/estado", "OFF"); // Barrio NORTE
+      client.publish("datacenter/grupo/estado", "OFF"); // Datacenter
       lastReleState = LOW;
     }
   }
@@ -127,8 +126,8 @@ void reconnect() {
       Serial.println("Conectado!");
       
       // Suscribirse al tópico
-      client.subscribe("casa/pulsador/estado");    // Barrio NORTE
-      //client.subscribe("datacenter/grupo/estado");  // Datacenter
+      //client.subscribe("casa/pulsador/estado");    // Barrio NORTE
+      client.subscribe("datacenter/grupo/estado");  // Datacenter
     } else {
       Serial.print("Falló la conexión, rc=");
       Serial.print(client.state());
