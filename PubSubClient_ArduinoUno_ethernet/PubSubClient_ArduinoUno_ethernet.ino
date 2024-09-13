@@ -1,46 +1,74 @@
-#include <ESP8266WiFi.h>
+//***** ALARMA CORTE DE ENERGIA Y TEMPARATURA *****//
+#include <SPI.h>
+#include <Ethernet.h>
 #include <PubSubClient.h>
+//#include <DHT11.h>
 
-// Configuración de WiFi Barrio NORTE
-const char* ssid = "247IASbros2.4";
-const char* password = "T3reKByo2023$";
-// Configuración del servidor MQTT
+//#define DHTPIN 2
+//#define DHTTYPE DHT11
+
+void(* Resetea) (void) = 0;//Funcíon Reset por soft para el arduino (como si apretaramos el botón reset)
+
+// ETHERNET config.
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };//Dirección MAC de nuestro módulo ethernet
+//char server[] = "123.123.123.204"; //Cambiar por la url del servidor a usar   
+//IPAddress ip(192,168,1,6); //Asingamos la IP al Arduino
+IPAddress ip(192, 168, 24, 151); // IP en Barrio NORTE
+//IPAddress gateway(192, 168, 1, 1); // IP en Datacenter
+IPAddress gateway(192, 168, 24, 1); //Pasarela en Barrio NORTE
+//IPAddress subnet(255, 255, 255, 0); //Pasarela en Datacenter
+IPAddress subnet(255, 255, 255, 0);  //Mascara en Barrio NORTE
+//IPAddress subnet(255, 255, 254, 0);  //Mascara en Datacenter
+IPAddress dnServer(192, 168, 100, 1);  //DNS en Barrio NORTE
+//IPAddress dnServer(123, 123, 123, 8);  //DNS en Datacenter
+
+// Configuración del servidor MQTT en Barrio NORTE
 const char *mqtt_server = "192.168.24.150";
 const int mqtt_port = 1883;
 const char *mqtt_user = "usermqtt";
 const char *mqtt_pass = "Ia$247";
-
-// Configuración de WiFi Datacenter
-/*const char* ssid = "datacenter";
-const char* password = "NOv22$1nicI0";
+// Configuración del servidor MQTT en Datacenter
 //const char *mqtt_server = "45.186.124.70";
-const char *mqtt_server = "172.16.16.27";
+/*const char *mqtt_server = "172.16.16.27";
 const int mqtt_port = 1883;
 const char *mqtt_user = "adminmqtt";
 const char *mqtt_pass = "Ia$247";*/
 
-// Pin del pulsador
-const int led2rojo = 5;  // GPIO5 - D1
-const int relePin = 4;  // GPIO4 - D2
-//bool lastReleState = LOW; // CPNEXIÓN A PULL DOWN
+// Config relé detector de corte de energía
+int ledrojo = 4;  // Led indicador de corte energía
+int lednaranja = 5;  // Led indicador de umbral temperatura
+int relePin = 3;  
 int lastReleState = LOW; // de inicio el relé esta abierto
 int val = 0;    //
-// Cliente WiFi y cliente MQTT
-WiFiClient espClient;
-PubSubClient client(espClient);
+// Config sensor de temperatura
+//int pin=2;
+//DHT11 dht11(pin);  // Asignacion del pin del DHT11, el RTC tiene SDA en el A4 (SDA del arduino) y el SCL en el A5 (SCL del arduino)
+//int umbral = 28;  //Temperatura que activa alarma
+
+EthernetClient cliente;
+PubSubClient client(cliente);
 
 //************* DECLARAR FUNCIONES ***************************
-void setup_wifi();
 void callback(char* topic, byte* payload, unsigned int length);
 void reconnect();
 
 void setup() {
   Serial.begin(9600);
   pinMode(relePin, INPUT); 
-  pinMode(led2rojo, OUTPUT);
-  digitalWrite(led2rojo, LOW);  // Apagar el LED inicialmente
- 
-  setup_wifi();
+  pinMode(ledrojo, OUTPUT);
+  digitalWrite(ledrojo, LOW);  // Apagar el LED inicialmente
+  
+  if (Ethernet.begin(mac) == 0) {
+    Serial.println("Falló para configurar Ethernet usando DHCP");
+    // try to congifure using IP address instead of DHCP:
+    Ethernet.begin(mac, ip);
+  }
+  // give the Ethernet shield a second to initialize:
+  delay(1000);
+  Serial.print("IP Address: ");
+  Serial.println(Ethernet.localIP());
+  Serial.println("connecting...");
+  
   client.setServer(mqtt_server, mqtt_port);
   client.setCallback(callback);
 }
@@ -50,12 +78,10 @@ void loop() {
     reconnect();
   }
   client.loop();
-
   // Lectura del estado del Relé del G.E.
-  //bool currentReleState = digitalRead(relePin);
   val = digitalRead(relePin);
   if (val == HIGH)  {  //si está activado
-    digitalWrite(led2rojo, HIGH);  //LED ON
+    digitalWrite(ledrojo, HIGH);  //LED ON
     if (lastReleState == LOW)  {  //si previamente estaba apagado
       Serial.println("Grupo Electrógeno encendido: Publicando ON");
       client.publish("casa/pulsador/estado", "ON"); // Barrio NORTE
@@ -64,7 +90,7 @@ void loop() {
     }
   }
   else  {  //si esta desactivado
-    digitalWrite(led2rojo, LOW); // LED OFF
+    digitalWrite(ledrojo, LOW); // LED OFF
     if (lastReleState == HIGH)   {  //si previamente estaba encendido
       Serial.println("Grupo Electrógeno apagado. Publicando OFF");
       client.publish("casa/pulsador/estado", "OFF"); // Barrio NORTE
@@ -72,41 +98,6 @@ void loop() {
       lastReleState = LOW;
     }
   }
-  /*
-  if (currentReleState != lastReleState) {  // Verifica si el estado del relé ha cambiado
-    lastReleState = currentReleState;
-    if (currentReleState == HIGH) { // El botón se presionó
-      client.publish("casa/pulsador/estado", "ON"); // Barrio NORTE
-      //client.publish("datacenter/grupo/estado", "ON"); // Datacenter
-      Serial.println("Botón presionado: Publicando ON");
-      digitalWrite(led2rojo, HIGH);
-    } else { // El botón se soltó
-      client.publish("casa/pulsador/estado", "OFF"); // Barrio NORTE
-      //client.publish("datacenter/grupo/estado", "OFF"); // Datacenter
-      Serial.println("Botón soltado: Publicando OFF");
-      digitalWrite(led2rojo, LOW);
-    }
-  } */
-}
-
-//******* CONEXION WIFI ***********
-void setup_wifi() {
-  delay(10);
-  Serial.println();
-  Serial.print("Conectando a ");
-  Serial.println(ssid);
-
-  WiFi.begin(ssid, password);
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-
-  Serial.println("");
-  Serial.println("WiFi conectado");
-  Serial.print("Dirección IP: ");
-  Serial.println(WiFi.localIP());
 }
 
 // ********* RECEPCIÓN DE MENSAJES EN LOS T´PICOS SUSCRIPTOS **********
@@ -122,19 +113,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("]: ");
   Serial.println(messageTemp);
   Serial.println();
-
-//***** Si el mensaje recibido es "ON" o "OFF", puedes hacer algo aquí ******
-  /*if (String(topic) == "casa/pulsador/estado") {
-    if (messageTemp == "ON") {
-      // Acción cuando el mensaje es ON
-      Serial.println("El pulsador está en estado ON");
-      digitalWrite(led2rojo, HIGH);
-    } else if (messageTemp == "OFF") {
-      // Acción cuando el mensaje es OFF
-      Serial.println("El pulsador está en estado OFF");
-      digitalWrite(led2rojo, LOW);
-    }
-  }*/
 }
 
 //******** RECONECTARSE AL SERVER MQTT SI SE PIERDE CONEXIÓN *******
