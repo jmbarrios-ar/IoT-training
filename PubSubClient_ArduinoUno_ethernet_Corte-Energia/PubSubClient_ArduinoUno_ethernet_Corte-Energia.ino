@@ -2,10 +2,6 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <PubSubClient.h>
-//#include <DHT11.h>
-
-//#define DHTPIN 2
-//#define DHTTYPE DHT11
 
 void(* Resetea) (void) = 0;//Funcíon Reset por soft para el arduino (como si apretaramos el botón reset)
 
@@ -21,12 +17,12 @@ IPAddress subnet(255, 255, 255, 0);  //Mascara en Datacenter
 //IPAddress dnServer(192, 168, 100, 1);  //DNS en Barrio NORTE
 IPAddress dnServer(8, 8, 8, 8);  //DNS en Datacenter
 
-// Configuración del servidor MQTT en Barrio NORTE
+// ********Configuración del servidor MQTT en Barrio NORTE*************
 /*const char *mqtt_server = "192.168.24.150";
 const int mqtt_port = 1883;
 const char *mqtt_user = "usermqtt";
 const char *mqtt_pass = "Ia$247";*/
-// Configuración del servidor MQTT en Datacenter
+// ******** Configuración del servidor MQTT en Datacenter ***************
 //const char *mqtt_server = "45.186.124.70";
 const char *mqtt_server = "172.16.16.27";
 const int mqtt_port = 1883;
@@ -34,15 +30,10 @@ const char *mqtt_user = "adminmqtt";
 const char *mqtt_pass = "Ia$247";
 
 // Config relé detector de corte de energía
-int ledrojo = 4;  // Led indicador de corte energía
-int lednaranja = 5;  // Led indicador de umbral temperatura
+int lednaranja = 4;  // Led indicador de corte energía
 int relePin = 3;  
 int lastReleState = LOW; // de inicio el relé esta abierto
 int val = 0;    //
-// Config sensor de temperatura
-//int pin=2;
-//DHT11 dht11(pin);  // Asignacion del pin del DHT11, el RTC tiene SDA en el A4 (SDA del arduino) y el SCL en el A5 (SCL del arduino)
-//int umbral = 28;  //Temperatura que activa alarma
 
 EthernetClient cliente;
 PubSubClient client(cliente);
@@ -54,8 +45,8 @@ void reconnect();
 void setup() {
   Serial.begin(9600);
   pinMode(relePin, INPUT); 
-  pinMode(ledrojo, OUTPUT);
-  digitalWrite(ledrojo, LOW);  // Apagar el LED inicialmente
+  pinMode(lednaranja, OUTPUT); // Led indicador de corte energía
+  digitalWrite(lednaranja, LOW);  // Apagar el LED inicialmente
   
   if (Ethernet.begin(mac) == 0) {
     Serial.println("Falló para configurar Ethernet usando DHCP");
@@ -80,7 +71,7 @@ void loop() {
   // Lectura del estado del Relé del G.E.
   val = digitalRead(relePin);
   if (val == HIGH)  {  //si está activado
-    digitalWrite(ledrojo, HIGH);  //LED ON
+    digitalWrite(lednaranja, HIGH);  //LED ON
     if (lastReleState == LOW)  {  //si previamente estaba apagado
       Serial.println("Grupo Electrógeno encendido: Publicando ON");
       //client.publish("casa/pulsador/estado", "ON"); // Barrio NORTE
@@ -89,7 +80,7 @@ void loop() {
     }
   }
   else  {  //si esta desactivado
-    digitalWrite(ledrojo, LOW); // LED OFF
+    digitalWrite(lednaranja, LOW); // LED OFF
     if (lastReleState == HIGH)   {  //si previamente estaba encendido
       Serial.println("Grupo Electrógeno apagado. Publicando OFF");
       //client.publish("casa/pulsador/estado", "OFF"); // Barrio NORTE
@@ -97,6 +88,7 @@ void loop() {
       lastReleState = LOW;
     }
   }
+
 }
 
 // ********* RECEPCIÓN DE MENSAJES EN LOS T´PICOS SUSCRIPTOS **********
