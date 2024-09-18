@@ -90,10 +90,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
   if (String(topic) == "datacenter/porton/control" && messageTemp == "PULSE") {
     digitalWrite(porton, HIGH);  // Activar el relé
     digitalWrite(pinled, HIGH);
-    delay(2000);  // Mantener el estado HIGH durante 2 segundos
+    delay(1000);  // Mantener el estado HIGH durante 1 segundo
     digitalWrite(porton, LOW);   // Desactivar el relay
     digitalWrite(pinled, LOW);
-    Serial.println("Pulso de 2 segundos enviado al relay");
+    Serial.println("Pulso de 1 segundo enviado al relay");
   }
 }
 
