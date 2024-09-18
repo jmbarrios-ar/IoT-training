@@ -45,8 +45,8 @@ DHT dht(DHTPIN, DHTTYPE);
 int umbral = 28;  //Temperatura que activa alarma
 
 // Tópicos MQTT
-const char* topicTemp = "sensor/dht11/temperatura";     // Tópico para la temperatura
-const char* topicHum = "sensor/dht11/humedad";          // Tópico para la humedad
+const char* topicTemp = "datacenter/dht11/temperatura";     // Tópico para la temperatura
+const char* topicHum = "datacenter/dht11/humedad";          // Tópico para la humedad
 
 // Crear cliente Ethernet y MQTT
 EthernetClient cliente;
@@ -99,12 +99,12 @@ void loop() {
 
   // Publicar temperatura
   client.publish(topicTemp, tempStr.c_str());
-  Serial.print("Temperatura publicada: ");
+  Serial.print("Temperatura Área Servidores: ");
   Serial.println(tempStr);
 
   // Publicar humedad
   client.publish(topicHum, humStr.c_str());
-  Serial.print("Humedad publicada: ");
+  Serial.print("Humedad Área Servidores: ");
   Serial.println(humStr);
 
   // Esperar 10 segundos antes de la próxima lectura
