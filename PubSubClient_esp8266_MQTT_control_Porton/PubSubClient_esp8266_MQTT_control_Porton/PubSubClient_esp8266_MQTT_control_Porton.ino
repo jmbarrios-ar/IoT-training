@@ -3,22 +3,22 @@
 
 // ***** Barrio NORTE *******
 // Configuración de WiFi
-const char* ssid = "247IASbros2.4";
+/* const char* ssid = "247IASbros2.4";
 const char* password = "T3reKByo2023$";
 // Configuración del servidor MQTT
 const char *mqtt_server = "192.168.24.150";
 const int mqtt_port = 1883;
 const char *mqtt_user = "usermqtt";
-const char *mqtt_pass = "Ia$247"; 
+const char *mqtt_pass = "Ia$247"; */
 
 // ******** DATACENTER ********
-/*const char* ssid = "datacenter";
+const char* ssid = "datacenter";
 const char* password = "NOv22$1nicI0";
 //const char *mqtt_server = "45.186.124.70";
 const char *mqtt_server = "172.16.16.27";
 const int mqtt_port = 1883;
 const char *mqtt_user = "adminmqtt";
-const char *mqtt_pass = "Ia$247";  */
+const char *mqtt_pass = "Ia$247";  
 
 // Definición del pin relé que activa porton
 const int porton = 5;  // GPIO5 - D1   Conexión a la entrada del modulo relé
@@ -87,8 +87,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.println(messageTemp);
   
 //***** COMPARAR EL TÓPICO y ACTIVAR EL RELÉ SI EL PAYLOAD ES CORRECTO ******
-  //if (String(topic) == "datacenter/porton/control" && messageTemp == "PULSE") {   //Datacenter
-  if (String(topic) == "casa/porton/control" && messageTemp == "PULSE") {  //Barrio NORTE
+  if (String(topic) == "datacenter/porton/control" && messageTemp == "PULSE") {   //Datacenter
+  //if (String(topic) == "casa/porton/control" && messageTemp == "PULSE") {  //Barrio NORTE
     digitalWrite(porton, HIGH);  // Activar el relé
     digitalWrite(pinled, HIGH);
     delay(1000);  // Mantener el estado HIGH durante 1 segundo
@@ -110,8 +110,8 @@ void reconnect() {
       Serial.println("Conectado!");
       
       // Suscribirse al tópico del relé del porton
-      //client.subscribe("datacenter/porton/control");  // Datacenter
-      client.subscribe("casa/porton/control");  //Barrios NORTE
+      client.subscribe("datacenter/porton/control");  // Datacenter
+      //client.subscribe("casa/porton/control");  //Barrios NORTE
     } else {
       Serial.print("Falló la conexión, rc=");
       Serial.print(client.state());
