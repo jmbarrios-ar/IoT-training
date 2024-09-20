@@ -1,9 +1,9 @@
-//***** ALARMA CORTE DE ENERGIA Y TEMPARATURA *****//
+//***** ALARMA MONITOREO ESTADO DE GRUPO ELECTRÓGENO *****//
 #include <SPI.h>
 #include <Ethernet.h>
 #include <PubSubClient.h>
 
-void(* Resetea) (void) = 0;//Funcíon Reset por soft para el arduino (como si apretaramos el botón reset)
+void(* Resetea) (void) = 0;//Función Reset por soft para el arduino (como si apretaramos el botón reset)
 
 // ETHERNET config.
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };//Dirección MAC de nuestro módulo ethernet
@@ -30,7 +30,8 @@ const char *mqtt_user = "adminmqtt";
 const char *mqtt_pass = "Ia$247";
 
 // Config relé detector de corte de energía
-int lednaranja = 4;  // Led indicador de corte energía
+int ledROJO = 4;  // Led indicador con corte energía Grupo Electrógeno ENCENDIDO
+int ledVERDE = 5;  // Led indicador sin corte energía Grupo Electrógeno APAGADO
 int relePin = 3;  
 int lastReleState = LOW; // de inicio el relé esta abierto
 int val = 0;    //
@@ -45,15 +46,17 @@ void reconnect();
 void setup() {
   Serial.begin(9600);
   pinMode(relePin, INPUT); 
-  pinMode(lednaranja, OUTPUT); // Led indicador de corte energía
-  digitalWrite(lednaranja, LOW);  // Apagar el LED inicialmente
-  
+  pinMode(ledROJO, OUTPUT); // Led indicador CON corte energía
+  pinMode(ledVERDE, OUTPUT); // Led indicador SIN corte energía
+  digitalWrite(ledROJO, LOW);  // Apagar el LED inicialmente
+  digitalWrite(ledVERDE, HIGH);  // Encender el LED inicialmente
+
   if (Ethernet.begin(mac) == 0) {
     Serial.println("Falló para configurar Ethernet usando DHCP");
-    // try to congifure using IP address instead of DHCP:
+    // Intento congifurar usando la dirección IP en lugar de DHCP:
     Ethernet.begin(mac, ip);
   }
-  // give the Ethernet shield a second to initialize:
+  // Dejo el Ethernet Shield un segundo para inicializar:
   delay(1000);
   Serial.print("IP Address: ");
   Serial.println(Ethernet.localIP());
@@ -71,7 +74,8 @@ void loop() {
   // Lectura del estado del Relé del G.E.
   val = digitalRead(relePin);
   if (val == HIGH)  {  //si está activado
-    digitalWrite(lednaranja, HIGH);  //LED ON
+    digitalWrite(ledROJO, HIGH);  //LED ROJO ENCENDIDO
+    digitalWrite(ledVERDE, LOW);  //LED VERDE APAGADO
     if (lastReleState == LOW)  {  //si previamente estaba apagado
       Serial.println("Grupo Electrógeno encendido: Publicando ON");
       //client.publish("casa/pulsador/estado", "ON"); // Barrio NORTE
@@ -80,7 +84,8 @@ void loop() {
     }
   }
   else  {  //si esta desactivado
-    digitalWrite(lednaranja, LOW); // LED OFF
+    digitalWrite(ledROJO, LOW); // LED OFF
+    digitalWrite(ledVERDE, HIGH); // LED ON
     if (lastReleState == HIGH)   {  //si previamente estaba encendido
       Serial.println("Grupo Electrógeno apagado. Publicando OFF");
       //client.publish("casa/pulsador/estado", "OFF"); // Barrio NORTE
