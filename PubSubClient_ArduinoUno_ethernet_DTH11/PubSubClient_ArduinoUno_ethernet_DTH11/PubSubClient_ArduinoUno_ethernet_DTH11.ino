@@ -1,4 +1,4 @@
-//***** ALARMA CORTE DE ENERGIA Y TEMPARATURA *****//
+//***** ALARMA MONITOREO DE TEMPERATURA *****//
 #include <SPI.h>
 #include <Ethernet.h>
 #include <PubSubClient.h>
@@ -12,15 +12,14 @@ void(* Resetea) (void) = 0;//Funcíon Reset por soft para el arduino (como si ap
 
 // ETHERNET config.
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };//Dirección MAC de nuestro módulo ethernet
-//char server[] = "123.123.123.204"; //Cambiar por la url del servidor a usar   
-//IPAddress ip(192, 168, 24, 151); // IP en Barrio NORTE
-IPAddress ip(170, 10, 10, 38); // IP en Datacenter
-//IPAddress gateway(192, 168, 24, 1); //Pasarela en Barrio NORTE
-IPAddress gateway(170, 10, 10, 1); //Pasarela en Datacenter
-//IPAddress subnet(255, 255, 255, 0);  //Mascara en Barrio NORTE
-IPAddress subnet(255, 255, 255, 0);  //Mascara en Datacenter
-//IPAddress dnServer(192, 168, 100, 1);  //DNS en Barrio NORTE
-IPAddress dnServer(8, 8, 8, 8);  //DNS en Datacenter
+IPAddress ip(192, 168, 24, 151); // IP en Barrio NORTE
+//IPAddress ip(170, 10, 10, 38); // IP en Datacenter
+IPAddress gateway(192, 168, 24, 1); //Pasarela en Barrio NORTE
+//IPAddress gateway(170, 10, 10, 1); //Pasarela en Datacenter
+IPAddress subnet(255, 255, 255, 0);  //Mascara en Barrio NORTE
+//IPAddress subnet(255, 255, 255, 0);  //Mascara en Datacenter
+IPAddress dnServer(192, 168, 100, 1);  //DNS en Barrio NORTE
+//IPAddress dnServer(8, 8, 8, 8);  //DNS en Datacenter
 
 // ********Configuración del servidor MQTT en Barrio NORTE*************
 /*const char *mqtt_server = "192.168.24.150";
@@ -35,8 +34,8 @@ const char *mqtt_user = "adminmqtt";
 const char *mqtt_pass = "Ia$247";
 
 // Config leds
-int ledverde = 5;  // Led indicador de temperatura normal
-int ledrojo = 6;  // Led indicador de umbral temperatura 
+int ledAZUL = 5;  // Led indicador de temperatura normal
+int ledNARANJA = 6;  // Led indicador de umbral temperatura 
 
 // *********Config sensor de temperatura ***************
 //int pin=2;
@@ -59,8 +58,8 @@ void reconnect();
 void setup() {
   Serial.begin(9600);
   dht.begin();
-  pinMode(ledverde, OUTPUT); // Led indicador de temperatura normal
-  pinMode(ledrojo, OUTPUT); // Led indicador de umbral temperatura
+  pinMode(ledAZUL, OUTPUT); // Led indicador de temperatura normal
+  pinMode(ledNARANJA, OUTPUT); // Led indicador de umbral temperatura
   // **** Conexión a Ethernet ****  
   if (Ethernet.begin(mac) == 0) {
     Serial.println("Falló para configurar Ethernet usando DHCP");
