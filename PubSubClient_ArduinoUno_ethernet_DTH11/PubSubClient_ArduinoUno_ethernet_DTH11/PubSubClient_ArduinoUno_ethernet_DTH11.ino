@@ -2,8 +2,7 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <PubSubClient.h>
-//#include <DHT11.h>
-#include <DHT.h>
+#include <DHT11.h>
 
 #define DHTPIN 2 // Pin donde está conectado el DHT11
 #define DHTTYPE DHT11  // Tipo de sensor DHT (DHT11 o DHT22)
@@ -22,30 +21,32 @@ IPAddress dnServer(192, 168, 100, 1);  //DNS en Barrio NORTE
 //IPAddress dnServer(8, 8, 8, 8);  //DNS en Datacenter
 
 // ********Configuración del servidor MQTT en Barrio NORTE*************
-/*const char *mqtt_server = "192.168.24.150";
+const char *mqtt_server = "192.168.24.150";
 const int mqtt_port = 1883;
 const char *mqtt_user = "usermqtt";
-const char *mqtt_pass = "Ia$247";*/
+const char *mqtt_pass = "Ia$247";
 // ******** Configuración del servidor MQTT en Datacenter ***************
 //const char *mqtt_server = "45.186.124.70";
-const char *mqtt_server = "172.16.16.27";
+/*const char *mqtt_server = "172.16.16.27";
 const int mqtt_port = 1883;
 const char *mqtt_user = "adminmqtt";
-const char *mqtt_pass = "Ia$247";
+const char *mqtt_pass = "Ia$247";*/
 
 // Config leds
-int ledAZUL = 5;  // Led indicador de temperatura normal
-int ledNARANJA = 6;  // Led indicador de umbral temperatura 
+//int ledAZUL = 5;  // Led indicador de temperatura normal
+//int ledNARANJA = 6;  // Led indicador de umbral temperatura 
 
 // *********Config sensor de temperatura ***************
-//int pin=2;
-//DHT11 dht11(pin);  // Asignacion del pin del DHT11, el RTC tiene SDA en el A4 (SDA del arduino) y el SCL en el A5 (SCL del arduino)
-DHT dht(DHTPIN, DHTTYPE);
-int umbral = 28;  //Temperatura que activa alarma
+int pin=2;
+DHT11 dht11(pin);  // Asignacion del pin del DHT11, el RTC tiene SDA en el A4 (SDA del arduino) y el SCL en el A5 (SCL del arduino)
+//int umbral = 28;  //Temperatura que activa alarma
 
-// Tópicos MQTT
-const char* topicTemp = "datacenter/dht11/temperatura";     // Tópico para la temperatura
-const char* topicHum = "datacenter/dht11/humedad";          // Tópico para la humedad
+// Tópicos MQTT Barrio NORTE
+const char* topicTemp = "casa/dht11/temperatura";     // Tópico para la temperatura
+const char* topicHum = "casa/dht11/humedad";          // Tópico para la humedad
+// Tópicos MQTT Datacenter
+//const char* topicTemp = "datacenter/dht11/temperatura";     // Tópico para la temperatura
+//const char* topicHum = "datacenter/dht11/humedad";          // Tópico para la humedad
 
 // Crear cliente Ethernet y MQTT
 EthernetClient cliente;
@@ -57,9 +58,9 @@ void reconnect();
 
 void setup() {
   Serial.begin(9600);
-  dht.begin();
-  pinMode(ledAZUL, OUTPUT); // Led indicador de temperatura normal
-  pinMode(ledNARANJA, OUTPUT); // Led indicador de umbral temperatura
+  //dht.begin();
+  //pinMode(ledAZUL, OUTPUT); // Led indicador de temperatura normal
+  //pinMode(ledNARANJA, OUTPUT); // Led indicador de umbral temperatura
   // **** Conexión a Ethernet ****  
   if (Ethernet.begin(mac) == 0) {
     Serial.println("Falló para configurar Ethernet usando DHCP");
@@ -70,7 +71,7 @@ void setup() {
   delay(1000);
   Serial.print("IP Address: ");
   Serial.println(Ethernet.localIP());
-  Serial.println("connecting...");
+  Serial.println("Conectando...");
   
   client.setServer(mqtt_server, mqtt_port);  // Configurar el servidor MQTT
   //client.setCallback(callback);
@@ -83,8 +84,8 @@ void loop() {
   client.loop();   // Mantener la conexión activa
   
   // Leer temperatura y humedad del DHT11
-  float h = dht.readHumidity();
-  float t = dht.readTemperature(); // Temperatura en grados Celsius
+  float h = dht11.readHumidity();  // Humedad en porcentaje %
+  float t = dht11.readTemperature(); // Temperatura en grados Celsius
 
   // Verificar si las lecturas son válidas
   if (isnan(h) || isnan(t)) {
@@ -110,21 +111,6 @@ void loop() {
   delay(10000);
 
 }
-
-// ********* RECEPCIÓN DE MENSAJES EN LOS T´PICOS SUSCRIPTOS **********
-/*void callback(char* topic, byte* payload, unsigned int length) {
-  String messageTemp;
-  
-  for (int i = 0; i < length; i++) {
-    messageTemp += (char)payload[i];
-  }
-  
-  Serial.print("Mensaje recibido [");
-  Serial.print(topic);
-  Serial.print("]: ");
-  Serial.println(messageTemp);
-  Serial.println();
-} */
 
 //******** RECONECTARSE AL SERVER MQTT SI SE PIERDE CONEXIÓN *******
 void reconnect() {
