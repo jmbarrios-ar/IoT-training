@@ -9,25 +9,25 @@
 
 void(* Resetea) (void) = 0;//Funcíon Reset por soft para el arduino (como si apretaramos el botón reset)
 
-// ********** ETHERNET config. DATACENTER *********************************
-IPAddress ip(170, 10, 10, 38); // IP en Datacenter
-IPAddress gateway(170, 10, 10, 1); //Pasarela en Datacenter
-IPAddress subnet(255, 255, 255, 0);  //Mascara en Datacenter
-IPAddress dnServer(8, 8, 8, 8);  //DNS en Datacenter
+// ********** ETHERNET config. Barrio NORTE *********************************
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };//Dirección MAC de nuestro módulo ethernet
+IPAddress ip(192, 168, 24, 151); // IP en Barrio NORTE
+IPAddress gateway(192, 168, 24, 1); //Pasarela en Barrio NORTE
+IPAddress subnet(255, 255, 255, 0);  //Mascara en Barrio NORTE
+IPAddress dnServer(192, 168, 100, 1);  //DNS en Barrio NORTE
 
-// ******** Configuración del servidor MQTT en Datacenter ***************
-//const char *mqtt_server = "45.186.124.70";
-const char *mqtt_server = "172.16.16.27";
+// ********Configuración del servidor MQTT en Barrio NORTE*************
+const char *mqtt_server = "192.168.24.150";
 const int mqtt_port = 1883;
-const char *mqtt_user = "adminmqtt";
+const char *mqtt_user = "usermqtt";
 const char *mqtt_pass = "Ia$247";
 
 // ************** Config relé detector de corte de energía **********************
-int ledROJO = 4;  // Led indicador con corte energía Grupo Electrógeno ENCENDIDO
-int ledVERDE = 5;  // Led indicador sin corte energía Grupo Electrógeno APAGADO
+int ledROJO = 4;  // Led indicador con corte energía
+int ledVERDE = 5;  // Led indicador sin corte energía
 int relePin = 3;  
-int lastReleState = LOW; // de inicio el relé esta abierto
-int val = 0;    //
+int lastReleState = HIGH; // de inicio el relé esta abierto
+int val = 1;    //
 
 // Config leds Temperatura
 //int ledAZUL = 5;  // Led indicador de temperatura normal
@@ -38,9 +38,9 @@ int pin=2;
 DHT11 dht11(pin);  // Asignacion del pin del DHT11, el RTC tiene SDA en el A4 (SDA del arduino) y el SCL en el A5 (SCL del arduino)
 //int umbral = 28;  //Temperatura que activa alarma
 
-// Tópicos MQTT Datacenter
-const char* topicTemp = "datacenter/dht11/temperatura";     // Tópico para la temperatura
-const char* topicHum = "datacenter/dht11/humedad";          // Tópico para la humedad
+// Tópicos MQTT Barrio NORTE
+const char* topicTemp = "casa/dht11/temperatura";     // Tópico para la temperatura
+const char* topicHum = "casa/dht11/humedad";          // Tópico para la humedad
 
 // Crear cliente Ethernet y MQTT
 EthernetClient cliente;
@@ -49,7 +49,7 @@ PubSubClient client(cliente);
 //************* DECLARAR FUNCIONES ***************************
 //void callback(char* topic, byte* payload, unsigned int length);
 void reconnect();
-void relegrupoelectrogeno();
+void relesinluz();
 void tempyhumd();
 
 void setup() {
@@ -80,7 +80,7 @@ void loop() {
     reconnect();
   }
   client.loop();
-  relegrupoelectrogeno();
+  relesinluz();
   tempyhumd();
 }
 
@@ -111,7 +111,7 @@ void reconnect() {
       Serial.println("Conectado!");
       
       // Suscribirse al tópico
-      client.subscribe("datacenter/grupo/estado");  // Datacenter
+      client.subscribe("casa/pulsador/estado");    // Barrio NORTE
     } else {
       Serial.print("Falló la conexión, rc=");
       Serial.print(client.state());
@@ -121,26 +121,26 @@ void reconnect() {
   }
 }
 
-//************ DETECTAR ENCENDIDO GRUPO ELECTRÓGENO **************
-void relegrupoelectrogeno(){
+//************ DETECTAR CORTE DE ENERGÍA **************
+void relesinluz(){
   // Lectura del estado del Relé del G.E.
   val = digitalRead(relePin);
-  if (val == HIGH)  {  //si está activado
+  if (val == LOW)  {  //si está activado
     digitalWrite(ledROJO, HIGH);  //LED ROJO ENCENDIDO
     digitalWrite(ledVERDE, LOW);  //LED VERDE APAGADO
-    if (lastReleState == LOW)  {  //si previamente estaba apagado
-      Serial.println("Grupo Electrógeno encendido: Publicando ON");
-      client.publish("datacenter/grupo/estado", "ON"); // Datacenter
-      lastReleState = HIGH;
+    if (lastReleState == HIGH)  {  //si previamente estaba apagado
+      Serial.println("Corte de Energía Eléctrica detectado: Publicando ON");
+      client.publish("casa/pulsador/estado", "ON"); // Barrio NORTE
+      lastReleState = LOW;
     }
   }
   else  {  //si esta desactivado
     digitalWrite(ledROJO, LOW); // LED OFF
     digitalWrite(ledVERDE, HIGH); // LED ON
-    if (lastReleState == HIGH)   {  //si previamente estaba encendido
-      Serial.println("Grupo Electrógeno apagado. Publicando OFF");
-      client.publish("datacenter/grupo/estado", "OFF"); // Datacenter
-      lastReleState = LOW;
+    if (lastReleState == LOW)   {  //si previamente estaba encendido
+      Serial.println("La Energía Eléctrica se ha restablecido: Publicando OFF");
+      client.publish("casa/pulsador/estado", "OFF"); // Barrio NORTE
+      lastReleState = HIGH;
     }
   }
 }
@@ -162,12 +162,12 @@ void tempyhumd() {
 
   // Publicar temperatura
   client.publish(topicTemp, tempStr.c_str());
-  Serial.print("Temperatura Área Servidores: ");
+  Serial.print("Temperatura en Casa: ");
   Serial.println(tempStr);
 
   // Publicar humedad
   client.publish(topicHum, humStr.c_str());
-  Serial.print("Humedad Área Servidores: ");
+  Serial.print("Humedad en Casa: ");
   Serial.println(humStr);
 
   // Esperar 10 segundos antes de la próxima lectura
