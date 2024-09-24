@@ -10,6 +10,7 @@
 void(* Resetea) (void) = 0;//Funcíon Reset por soft para el arduino (como si apretaramos el botón reset)
 
 // ********** ETHERNET config. DATACENTER *********************************
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };//Dirección MAC de nuestro módulo ethernet
 IPAddress ip(170, 10, 10, 38); // IP en Datacenter
 IPAddress gateway(170, 10, 10, 1); //Pasarela en Datacenter
 IPAddress subnet(255, 255, 255, 0);  //Mascara en Datacenter
