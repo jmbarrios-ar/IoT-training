@@ -2,7 +2,7 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <PubSubClient.h>
-#include <DHT11.h>
+#include <DHT11.h>      // Agregar libreria DHT11 by Dhruba Saha
 
 #define DHTPIN 2 // Pin donde está conectado el DHT11
 #define DHTTYPE DHT11  // Tipo de sensor DHT (DHT11 o DHT22)
