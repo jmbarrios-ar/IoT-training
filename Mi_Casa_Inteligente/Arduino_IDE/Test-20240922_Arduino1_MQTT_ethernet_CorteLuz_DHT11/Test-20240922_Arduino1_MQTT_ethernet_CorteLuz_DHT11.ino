@@ -1,3 +1,6 @@
+#include <DHT.h>
+#include <DHT_U.h>
+
 //***** ALARMA MONITOREO ESTADO DE GRUPO ELECTRÓGENO y MONITOREO DE TEMPERATURA  *****//
 #include <SPI.h>
 #include <Ethernet.h>
