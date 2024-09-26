@@ -1,4 +1,4 @@
-//***** ALARMA MONITOREO ESTADO DE GRUPO ELECTRÓGENO y MONITOREO DE TEMPERATURA  *****//
+//***** ALARMA MONITOREO ESTADO DE GRUPO ELECTRÓGENO y MONITOREO DE TEMPERATURA EN DATACENTER *****//
 #include <SPI.h>
 #include <Ethernet.h>
 #include <PubSubClient.h>
@@ -171,6 +171,6 @@ void tempyhumd() {
   Serial.print("Humedad Área Servidores: ");
   Serial.println(humStr);
 
-  // Esperar 10 segundos antes de la próxima lectura
-  delay(10000);
+  // Esperar 6 segundos antes de la próxima lectura
+  delay(6000);
 }
