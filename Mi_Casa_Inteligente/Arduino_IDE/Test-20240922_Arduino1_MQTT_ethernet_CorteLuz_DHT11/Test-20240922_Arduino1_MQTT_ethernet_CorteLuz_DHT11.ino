@@ -111,7 +111,7 @@ void reconnect() {
       Serial.println("Conectado!");
       
       // Suscribirse al tópico
-      client.subscribe("casa/pulsador/estado");    // Barrio NORTE
+      client.subscribe("casa/rele/estado");    // Barrio NORTE
     } else {
       Serial.print("Falló la conexión, rc=");
       Serial.print(client.state());
@@ -123,14 +123,14 @@ void reconnect() {
 
 //************ DETECTAR CORTE DE ENERGÍA **************
 void relesinluz(){
-  // Lectura del estado del Relé del G.E.
+  // Lectura del estado del Relé detector de energía eléctrica
   val = digitalRead(relePin);
   if (val == LOW)  {  //si está activado
     digitalWrite(ledROJO, HIGH);  //LED ROJO ENCENDIDO
     digitalWrite(ledVERDE, LOW);  //LED VERDE APAGADO
     if (lastReleState == HIGH)  {  //si previamente estaba apagado
       Serial.println("Corte de Energía Eléctrica detectado: Publicando OFF");
-      client.publish("casa/pulsador/estado", "OFF"); // Barrio NORTE
+      client.publish("casa/rele/estado", "OFF"); // Barrio NORTE
       lastReleState = LOW;
     }
   }
@@ -139,7 +139,7 @@ void relesinluz(){
     digitalWrite(ledVERDE, HIGH); // LED ON
     if (lastReleState == LOW)   {  //si previamente estaba encendido
       Serial.println("La Energía Eléctrica se ha restablecido: Publicando ON");
-      client.publish("casa/pulsador/estado", "ON"); // Barrio NORTE
+      client.publish("casa/rele/estado", "ON"); // Barrio NORTE
       lastReleState = HIGH;
     }
   }
@@ -170,6 +170,6 @@ void tempyhumd() {
   Serial.print("Humedad en Casa: ");
   Serial.println(humStr);
 
-  // Esperar 10 segundos antes de la próxima lectura
-  delay(10000);
+  // Esperar 6 segundos antes de la próxima lectura
+  delay(6000);
 }
