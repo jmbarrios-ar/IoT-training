@@ -2,29 +2,29 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <PubSubClient.h>
-#include <DHT11.h>
+#include <DHT11.h>    // Agregar libreria DHT11 by Dhruba Saha
 
 #define DHTPIN 2 // Pin donde está conectado el DHT11
 #define DHTTYPE DHT11  // Tipo de sensor DHT (DHT11 o DHT22)
 
 void(* Resetea) (void) = 0;//Funcíon Reset por soft para el arduino (como si apretaramos el botón reset)
 
-// ********** ETHERNET config. Barrio NORTE *********************************
+// ********** ETHERNET config. CASA GOBIERNO *********************************
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };//Dirección MAC de nuestro módulo ethernet
-IPAddress ip(192, 168, 24, 151); // IP en Barrio NORTE
-IPAddress gateway(192, 168, 24, 1); //Pasarela en Barrio NORTE
-IPAddress subnet(255, 255, 255, 0);  //Mascara en Barrio NORTE
-IPAddress dnServer(192, 168, 100, 1);  //DNS en Barrio NORTE
+IPAddress ip(170, 10, 10, 38); // IP en Cómputos
+IPAddress gateway(170, 10, 10, 1); //Pasarela en Cómputos
+IPAddress subnet(255, 255, 255, 0);  //Mascara en Cómputos
+IPAddress dnServer(8, 8, 8, 8);  //DNS en Cómputos
 
-// ********Configuración del servidor MQTT en Barrio NORTE*************
-const char *mqtt_server = "192.168.24.150";
+// ********Configuración del servidor MQTT para CASA GOBIERNO *************
+const char *mqtt_server = "172.16.16.27";
 const int mqtt_port = 1883;
-const char *mqtt_user = "usermqtt";
+const char *mqtt_user = "adminmqtt";
 const char *mqtt_pass = "Ia$247";
 
 // ************** Config relé detector de corte de energía **********************
-int ledROJO = 4;  // Led indicador con corte energía
-int ledVERDE = 5;  // Led indicador sin corte energía
+int ledROJO = 4;  // Led indicador corte energía en Cómputos
+int ledVERDE = 5;  // Led indicador sin corte energía en Cómputos
 int relePin = 3;  
 int lastReleState = HIGH; // de inicio el relé esta abierto
 int val = 1;    //
@@ -39,8 +39,8 @@ DHT11 dht11(pin);  // Asignacion del pin del DHT11, el RTC tiene SDA en el A4 (S
 //int umbral = 28;  //Temperatura que activa alarma
 
 // Tópicos MQTT Barrio NORTE
-const char* topicTemp = "casa/dht11/temperatura";     // Tópico para la temperatura
-const char* topicHum = "casa/dht11/humedad";          // Tópico para la humedad
+const char* topicTemp = "casagob/dht11/temperatura";     // Tópico para la temperatura
+const char* topicHum = "casagob/dht11/humedad";          // Tópico para la humedad
 
 // Crear cliente Ethernet y MQTT
 EthernetClient cliente;
@@ -111,7 +111,7 @@ void reconnect() {
       Serial.println("Conectado!");
       
       // Suscribirse al tópico
-      client.subscribe("casa/pulsador/estado");    // Barrio NORTE
+      client.subscribe("casagob/rele/estado");    // Cómputos
     } else {
       Serial.print("Falló la conexión, rc=");
       Serial.print(client.state());
@@ -123,23 +123,23 @@ void reconnect() {
 
 //************ DETECTAR CORTE DE ENERGÍA **************
 void relesinluz(){
-  // Lectura del estado del Relé del G.E.
+  // Lectura del estado del Relé detector Corte de Energía en Cómputos
   val = digitalRead(relePin);
   if (val == LOW)  {  //si está activado
     digitalWrite(ledROJO, HIGH);  //LED ROJO ENCENDIDO
     digitalWrite(ledVERDE, LOW);  //LED VERDE APAGADO
     if (lastReleState == HIGH)  {  //si previamente estaba apagado
       Serial.println("Corte de Energía Eléctrica detectado: Publicando OFF");
-      client.publish("casa/pulsador/estado", "OFF"); // Barrio NORTE
+      client.publish("casagob/rele/estado", "OFF"); // Cómputos
       lastReleState = LOW;
     }
   }
-  else  {  //si esta desactivado
+  else  {  //si esta desactivado el relé
     digitalWrite(ledROJO, LOW); // LED OFF
     digitalWrite(ledVERDE, HIGH); // LED ON
     if (lastReleState == LOW)   {  //si previamente estaba encendido
       Serial.println("La Energía Eléctrica se ha restablecido: Publicando ON");
-      client.publish("casa/pulsador/estado", "ON"); // Barrio NORTE
+      client.publish("casagob/rele/estado", "ON"); // Cómputos
       lastReleState = HIGH;
     }
   }
@@ -170,6 +170,6 @@ void tempyhumd() {
   Serial.print("Humedad en Casa: ");
   Serial.println(humStr);
 
-  // Esperar 10 segundos antes de la próxima lectura
-  delay(10000);
+  // Esperar 6 segundos antes de la próxima lectura
+  delay(6000);
 }
