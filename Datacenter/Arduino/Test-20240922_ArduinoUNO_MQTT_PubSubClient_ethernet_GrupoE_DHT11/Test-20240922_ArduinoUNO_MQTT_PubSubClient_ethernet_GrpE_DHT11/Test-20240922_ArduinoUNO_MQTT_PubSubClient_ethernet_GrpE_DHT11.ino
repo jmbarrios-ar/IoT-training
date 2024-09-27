@@ -85,7 +85,7 @@ void loop() {
   tempyhumd();
 }
 
-// ********* RECEPCIÓN DE MENSAJES EN LOS T´PICOS SUSCRIPTOS **********
+// ********* RECEPCIÓN DE MENSAJES EN LOS TÓPICOS SUSCRIPTOS **********
 /*void callback(char* topic, byte* payload, unsigned int length) {
   String messageTemp;
   

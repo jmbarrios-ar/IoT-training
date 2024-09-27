@@ -11,9 +11,9 @@ void(* Resetea) (void) = 0;//Funcíon Reset por soft para el arduino (como si ap
 
 // ********** ETHERNET config. CASA GOBIERNO *********************************
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };//Dirección MAC de nuestro módulo ethernet
-IPAddress ip(170, 10, 10, 38); // IP en Cómputos
-IPAddress gateway(170, 10, 10, 1); //Pasarela en Cómputos
-IPAddress subnet(255, 255, 255, 0);  //Mascara en Cómputos
+IPAddress ip(123, 123, 123, 138); // IP en Cómputos
+IPAddress gateway(123, 123, 123, 140); //Pasarela en Cómputos
+IPAddress subnet(255, 255, 252, 0);  //Mascara en Cómputos
 IPAddress dnServer(8, 8, 8, 8);  //DNS en Cómputos
 
 // ********Configuración del servidor MQTT para CASA GOBIERNO *************
@@ -60,11 +60,11 @@ void setup() {
   digitalWrite(ledROJO, LOW);  // Apagar el LED inicialmente
   digitalWrite(ledVERDE, HIGH);  // Encender el LED inicialmente
 
-  if (Ethernet.begin(mac) == 0) {
-    Serial.println("Falló para configurar Ethernet usando DHCP");
+  /*if (Ethernet.begin(mac) == 0) {
+    Serial.println("Falló para configurar Ethernet usando DHCP"); */
     // Intento congifurar usando la dirección IP en lugar de DHCP:
-    Ethernet.begin(mac, ip);
-  }
+  Ethernet.begin(mac, ip, gateway, subnet, dnServer);   // IP estática definida anteriormente
+  /*} */
   // Dejo el Ethernet Shield un segundo para inicializar:
   delay(1000);
   Serial.print("IP Address: ");
@@ -111,7 +111,7 @@ void reconnect() {
       Serial.println("Conectado!");
       
       // Suscribirse al tópico
-      client.subscribe("casagob/rele/estado");    // Cómputos
+      client.subscribe("casagob/energia/estado");    // Cómputos
     } else {
       Serial.print("Falló la conexión, rc=");
       Serial.print(client.state());
@@ -130,7 +130,7 @@ void relesinluz(){
     digitalWrite(ledVERDE, LOW);  //LED VERDE APAGADO
     if (lastReleState == HIGH)  {  //si previamente estaba apagado
       Serial.println("Corte de Energía Eléctrica detectado: Publicando OFF");
-      client.publish("casagob/rele/estado", "OFF"); // Cómputos
+      client.publish("casagob/energia/estado", "OFF"); // Cómputos
       lastReleState = LOW;
     }
   }
@@ -139,7 +139,7 @@ void relesinluz(){
     digitalWrite(ledVERDE, HIGH); // LED ON
     if (lastReleState == LOW)   {  //si previamente estaba encendido
       Serial.println("La Energía Eléctrica se ha restablecido: Publicando ON");
-      client.publish("casagob/rele/estado", "ON"); // Cómputos
+      client.publish("casagob/energia/estado", "ON"); // Cómputos
       lastReleState = HIGH;
     }
   }
