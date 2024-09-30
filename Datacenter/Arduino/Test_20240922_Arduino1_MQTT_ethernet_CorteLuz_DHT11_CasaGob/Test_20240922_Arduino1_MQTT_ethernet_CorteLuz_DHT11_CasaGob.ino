@@ -12,12 +12,16 @@ void(* Resetea) (void) = 0;//Funcíon Reset por soft para el arduino (como si ap
 // ********** ETHERNET config. CASA GOBIERNO *********************************
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };//Dirección MAC de nuestro módulo ethernet
 IPAddress ip(123, 123, 123, 138); // IP en Cómputos
-IPAddress gateway(123, 123, 123, 140); //Pasarela en Cómputos
-IPAddress subnet(255, 255, 252, 0);  //Mascara en Cómputos
-IPAddress dnServer(8, 8, 8, 8);  //DNS en Cómputos
+IPAddress gateway(123, 123, 123, 7); //Pasarela en Cómputos
+IPAddress subnet(255, 255, 254, 0);  //Mascara en Cómputos
+//IPAddress dnServer(8, 8, 8, 8);  //DNS en Cómputos
+/*IPAddress ip(172, 16, 16, 200); // IP en Cómputos
+IPAddress gateway(172, 16, 16, 16); //Pasarela en Cómputos
+IPAddress subnet(255, 255, 255, 0);  //Mascara en Cómputos*/
 
 // ********Configuración del servidor MQTT para CASA GOBIERNO *************
-const char *mqtt_server = "172.16.16.27";
+//const char *mqtt_server = "172.16.16.27";
+const char *mqtt_server = "123.123.123.140";   // Enmascaramos la IP original
 const int mqtt_port = 1883;
 const char *mqtt_user = "adminmqtt";
 const char *mqtt_pass = "Ia$247";
@@ -59,12 +63,15 @@ void setup() {
   pinMode(ledVERDE, OUTPUT); // Led indicador SIN corte energía
   digitalWrite(ledROJO, LOW);  // Apagar el LED inicialmente
   digitalWrite(ledVERDE, HIGH);  // Encender el LED inicialmente
-
+// ************** Inicio conexión de Red con DHCP *************************
   /*if (Ethernet.begin(mac) == 0) {
-    Serial.println("Falló para configurar Ethernet usando DHCP"); */
+    Serial.println("Falló para configurar Ethernet usando DHCP");
     // Intento congifurar usando la dirección IP en lugar de DHCP:
-  Ethernet.begin(mac, ip, gateway, subnet, dnServer);   // IP estática definida anteriormente
-  /*} */
+    //Ethernet.begin(mac, ip, gateway, subnet);   // IP estática definida como opción
+  }   */
+// ************** Inicio conexión de Red con IP Fija *************************
+  Ethernet.begin(mac, ip, gateway, subnet);   // Iniciar con la IP estática definida inicialmente 
+  
   // Dejo el Ethernet Shield un segundo para inicializar:
   delay(1000);
   Serial.print("IP Address: ");
@@ -156,6 +163,9 @@ void tempyhumd() {
     Serial.println("Error al leer del sensor DHT11");
     return;
   }
+  // Convertir los valores float de temperatura y humedad a int
+  
+
   // Publicar los valores en los tópicos MQTT
   String tempStr = String(t);
   String humStr = String(h);
