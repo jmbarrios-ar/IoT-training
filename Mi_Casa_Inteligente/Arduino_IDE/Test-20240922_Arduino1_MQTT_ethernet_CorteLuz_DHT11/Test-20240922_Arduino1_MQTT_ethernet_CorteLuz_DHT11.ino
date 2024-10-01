@@ -156,9 +156,14 @@ void tempyhumd() {
     Serial.println("Error al leer del sensor DHT11");
     return;
   }
+  // Convertir los valores float a int
+  int hi;
+  int ti;
+  hi = (int) h;
+  ti = (int) t;
   // Publicar los valores en los tópicos MQTT
-  String tempStr = String(t);
-  String humStr = String(h);
+  String tempStr = String(ti);
+  String humStr = String(hi);
 
   // Publicar temperatura
   client.publish(topicTemp, tempStr.c_str());

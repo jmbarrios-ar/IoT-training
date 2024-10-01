@@ -11,10 +11,10 @@ void(* Resetea) (void) = 0;//Funcíon Reset por soft para el arduino (como si ap
 
 // ********** ETHERNET config. DATACENTER *********************************
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };//Dirección MAC de nuestro módulo ethernet
-IPAddress ip(170, 10, 10, 38); // IP en Datacenter
-IPAddress gateway(170, 10, 10, 1); //Pasarela en Datacenter
+IPAddress ip(172, 12, 12, 200); // IP en Datacenter
+IPAddress gateway(172, 16, 16, 16); //Pasarela en Datacenter
 IPAddress subnet(255, 255, 255, 0);  //Mascara en Datacenter
-IPAddress dnServer(8, 8, 8, 8);  //DNS en Datacenter
+//IPAddress dnServer(8, 8, 8, 8);  //DNS en Datacenter
 
 // ******** Configuración del servidor MQTT en Datacenter ***************
 //const char *mqtt_server = "45.186.124.70";
@@ -60,12 +60,15 @@ void setup() {
   pinMode(ledVERDE, OUTPUT); // Led indicador SIN corte energía
   digitalWrite(ledROJO, LOW);  // Apagar el LED inicialmente
   digitalWrite(ledVERDE, HIGH);  // Encender el LED inicialmente
-
-  if (Ethernet.begin(mac) == 0) {
+// ************** Inicio conexión de Red con DHCP *************************
+  /*if (Ethernet.begin(mac) == 0) {
     Serial.println("Falló para configurar Ethernet usando DHCP");
     // Intento congifurar usando la dirección IP en lugar de DHCP:
     Ethernet.begin(mac, ip);
-  }
+  }  */
+// ************** Inicio conexión de Red con IP Fija *************************
+  Ethernet.begin(mac, ip, gateway, subnet);   // Iniciar con la IP estática definida inicialmente 
+
   // Dejo el Ethernet Shield un segundo para inicializar:
   delay(1000);
   Serial.print("IP Address: ");
@@ -157,10 +160,15 @@ void tempyhumd() {
     Serial.println("Error al leer del sensor DHT11");
     return;
   }
+  // Convertir los valores float a int
+  int hi;
+  int ti;
+  hi = (int) h;
+  ti = (int) t;
   // Publicar los valores en los tópicos MQTT
-  String tempStr = String(t);
-  String humStr = String(h);
-
+  String tempStr = String(ti);
+  String humStr = String(hi);
+ 
   // Publicar temperatura
   client.publish(topicTemp, tempStr.c_str());
   Serial.print("Temperatura Área Servidores: ");
