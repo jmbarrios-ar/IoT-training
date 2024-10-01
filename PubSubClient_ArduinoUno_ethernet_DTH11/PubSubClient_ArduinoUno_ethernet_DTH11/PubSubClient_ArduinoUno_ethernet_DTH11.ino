@@ -61,12 +61,13 @@ void setup() {
   //dht.begin();
   //pinMode(ledAZUL, OUTPUT); // Led indicador de temperatura normal
   //pinMode(ledNARANJA, OUTPUT); // Led indicador de umbral temperatura
-  // **** Conexión a Ethernet ****  
-  if (Ethernet.begin(mac) == 0) {
+  // **** Conexión a Ethernet IP Dinámica ****  
+  /*if (Ethernet.begin(mac) == 0) {
     Serial.println("Falló para configurar Ethernet usando DHCP");
-    // try to congifure using IP address instead of DHCP:
-    Ethernet.begin(mac, ip, gateway, subnet);
-  }
+    Ethernet.begin(mac, ip, gateway, subnet);  // try to congifure using IP address instead of DHCP
+  }  */
+  // ***** Conexión a Ethernet IP fija *****
+  Ethernet.begin(mac, ip, gateway, subnet);
   // give the Ethernet shield a second to initialize:
   delay(1000);
   Serial.print("IP Address: ");
@@ -92,10 +93,16 @@ void loop() {
     Serial.println("Error al leer del sensor DHT11");
     return;
   }
-
+  // Convertir los valores float a int
+  int hi;
+  int ti;
+  hi = (int) h;
+  ti = (int) t;
   // Publicar los valores en los tópicos MQTT
-  String tempStr = String(t);
-  String humStr = String(h);
+  //String tempStr = String(t);
+  //String humStr = String(h);
+  String tempStr = String(ti);
+  String humStr = String(hi);
 
   // Publicar temperatura
   client.publish(topicTemp, tempStr.c_str());
