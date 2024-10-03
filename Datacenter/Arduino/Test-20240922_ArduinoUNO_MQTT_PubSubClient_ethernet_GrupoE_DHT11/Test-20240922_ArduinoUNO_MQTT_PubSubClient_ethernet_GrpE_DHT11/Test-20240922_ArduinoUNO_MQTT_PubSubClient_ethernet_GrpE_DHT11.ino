@@ -11,15 +11,15 @@ void(* Resetea) (void) = 0;//Funcíon Reset por soft para el arduino (como si ap
 
 // ********** ETHERNET config. DATACENTER *********************************
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };//Dirección MAC de nuestro módulo ethernet
-IPAddress ip(170, 10, 20, 200); // IP en Datacenter
-IPAddress gateway(170, 10, 20, 1); //Pasarela en Datacenter
+IPAddress ip(172, 16, 16, 41); // IP en Datacenter
+IPAddress gateway(172, 16, 16, 16); //Pasarela en Datacenter
 IPAddress subnet(255, 255, 255, 0);  //Mascara en Datacenter
 //IPAddress dnServer(8, 8, 8, 8);  //DNS en Datacenter
 
 // ******** Configuración del servidor MQTT en Datacenter ***************
 //const char *mqtt_server = "45.186.124.70";
-const char *mqtt_server = "123.123.123.140";
-//const char *mqtt_server = "172.16.16.27";
+//const char *mqtt_server = "123.123.123.140";
+const char *mqtt_server = "172.16.16.27";
 const int mqtt_port = 1883;
 const char *mqtt_user = "adminmqtt";
 const char *mqtt_pass = "Ia$247";
