@@ -1,5 +1,4 @@
 #include <WiFi.h>  //ESP32
-//#include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
 // ***** Barrio NORTE *******
@@ -13,8 +12,12 @@ const char *mqtt_user = "usermqtt";
 const char *mqtt_pass = "Ia$247";
 
 // Definición del pin relé que activa porton
-const int porton = 5;  // GPIO5 - D1   Conexión a la entrada del modulo relé
-//const int pinled = 4;  // GPIO4 - D2   Led piloto del PULSO
+#define RELE 26
+//#define pinled 27
+#define RELE_ON HIGH
+#define RELE_OFF LOW
+//#define LED_ON HIGH
+//#define LED_OFF LOW
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -27,11 +30,11 @@ void reconnect();
 void setup() {
   Serial.begin(115200);
   // Inicializar el pin modulo relé del portón y el led piloto
-  pinMode(porton, OUTPUT);
+  pinMode(RELE, OUTPUT);
   //pinMode(pinled, OUTPUT);
   // Apagar inicialmente el relé del portón y el led
-  digitalWrite(porton, LOW);
-  //digitalWrite(pinled, LOW);
+  digitalWrite(RELE, RELE_OFF);
+  //digitalWrite(pinled, LED_OFF);
   
   setup_wifi();
   client.setServer(mqtt_server, mqtt_port);
@@ -79,12 +82,12 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.println(messageTemp);
   
 //***** COMPARAR EL TÓPICO y ACTIVAR EL RELÉ SI EL PAYLOAD ES CORRECTO ******
-  if (String(topic) == "casa/porton/control" && messageTemp == "PULSE") {  //Barrio NORTE
-    digitalWrite(porton, HIGH);  // Activar el relé
-    //digitalWrite(pinled, HIGH);
+  if (String(topic) == "casa/porton/pulsar" && messageTemp == "PULSE") {  //Barrio NORTE
+    digitalWrite(RELE, RELE_ON);  // Activar el relé
+    //digitalWrite(pinled, LED_ON);
     delay(1000);  // Mantener el estado HIGH durante 1 segundo
-    digitalWrite(porton, LOW);   // Desactivar el relay
-    //digitalWrite(pinled, LOW);
+    digitalWrite(RELE, RELE_OFF);   // Desactivar el relay
+    //digitalWrite(pinled, LED_OFF);
     Serial.println("Pulso de 1 segundo enviado al relay");
   }
 }
@@ -101,7 +104,7 @@ void reconnect() {
       Serial.println("Conectado!");
       
       // Suscribirse al tópico del relé del porton
-      client.subscribe("casa/porton/control");  //Barrios NORTE
+      client.subscribe("casa/porton/pulsar");  //Barrios NORTE
     } else {
       Serial.print("Falló la conexión, rc=");
       Serial.print(client.state());
