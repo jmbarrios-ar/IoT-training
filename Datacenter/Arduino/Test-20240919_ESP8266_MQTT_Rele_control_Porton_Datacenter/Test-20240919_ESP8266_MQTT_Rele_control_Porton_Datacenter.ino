@@ -13,7 +13,7 @@ const char* mqtt_pass = "Ia$247";
 
 // Definición del pin relé que activa porton
 const int porton = 5;  // GPIO5 - D1   Conexión a la entrada del modulo relé
-//const int pinled = 4;  // GPIO4 - D2   Led piloto del PULSO
+const int pinled = 4;  // GPIO4 - D2   Led piloto del PULSO
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -27,10 +27,10 @@ void setup() {
   Serial.begin(9600);
   // Inicializar el pin modulo relé del portón y el led piloto
   pinMode(porton, OUTPUT);
-  //pinMode(pinled, OUTPUT);
+  pinMode(pinled, OUTPUT);
   // Apagar inicialmente el relé del portón y el led
   digitalWrite(porton, LOW);
-  //digitalWrite(pinled, LOW);
+  digitalWrite(pinled, LOW);
 
   setup_wifi();
   client.setServer(mqtt_server, mqtt_port);
@@ -80,10 +80,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
   //***** COMPARAR EL TÓPICO y ACTIVAR EL RELÉ SI EL PAYLOAD ES CORRECTO ******
   if (String(topic) == "datacenter/porton/control" && messageTemp == "PULSE") {  //Datacenter
     digitalWrite(porton, HIGH);                                                  // Activar el relé
-    //digitalWrite(pinled, HIGH);
+    digitalWrite(pinled, HIGH);
     delay(1000);                // Mantener el estado HIGH durante 1 segundo
     digitalWrite(porton, LOW);  // Desactivar el relay
-    //digitalWrite(pinled, LOW);
+    digitalWrite(pinled, LOW);
     Serial.println("Pulso de 1 segundo enviado al relay");
   }
 }
