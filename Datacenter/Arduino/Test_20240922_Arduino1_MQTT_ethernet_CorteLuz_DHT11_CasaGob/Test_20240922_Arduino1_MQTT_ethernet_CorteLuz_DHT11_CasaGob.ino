@@ -15,12 +15,9 @@ IPAddress ip(123, 123, 123, 138); // IP en Cómputos
 IPAddress gateway(123, 123, 123, 7); //Pasarela en Cómputos
 IPAddress subnet(255, 255, 254, 0);  //Mascara en Cómputos
 //IPAddress dnServer(8, 8, 8, 8);  //DNS en Cómputos
-/*IPAddress ip(172, 16, 16, 200); // IP en Cómputos
-IPAddress gateway(172, 16, 16, 16); //Pasarela en Cómputos
-IPAddress subnet(255, 255, 255, 0);  //Mascara en Cómputos*/
 
 // ********Configuración del servidor MQTT para CASA GOBIERNO *************
-//const char *mqtt_server = "172.16.16.27";
+//const char *mqtt_server = "172.16.16.27";   //Esta línea se deshabilitó, solo es para prueba
 const char *mqtt_server = "123.123.123.140";   // Enmascaramos la IP original
 const int mqtt_port = 1883;
 const char *mqtt_user = "adminmqtt";
@@ -50,12 +47,6 @@ const char* topicHum = "casagob/dht11/humedad";          // Tópico para la hume
 EthernetClient cliente;
 PubSubClient client(cliente);
 
-//************* DECLARAR FUNCIONES ***************************
-//void callback(char* topic, byte* payload, unsigned int length);
-void reconnect();
-void relesinluz();
-void tempyhumd();
-
 void setup() {
   Serial.begin(9600);
   pinMode(relePin, INPUT); 
@@ -64,13 +55,13 @@ void setup() {
   digitalWrite(ledROJO, LOW);  // Apagar el LED inicialmente
   digitalWrite(ledVERDE, HIGH);  // Encender el LED inicialmente
 // ************** Inicio conexión de Red con DHCP *************************
-  /*if (Ethernet.begin(mac) == 0) {
+  if (Ethernet.begin(mac) == 0) {
     Serial.println("Falló para configurar Ethernet usando DHCP");
     // Intento congifurar usando la dirección IP en lugar de DHCP:
-    //Ethernet.begin(mac, ip, gateway, subnet);   // IP estática definida como opción
-  }   */
+    Ethernet.begin(mac, ip, gateway, subnet);   // IP estática definida como opción
+  } 
 // ************** Inicio conexión de Red con IP Fija *************************
-  Ethernet.begin(mac, ip, gateway, subnet);   // Iniciar con la IP estática definida inicialmente 
+//  Ethernet.begin(mac, ip, gateway, subnet);   // Iniciar con la IP estática definida inicialmente 
   
   // Dejo el Ethernet Shield un segundo para inicializar:
   delay(1000);
@@ -81,6 +72,12 @@ void setup() {
   client.setServer(mqtt_server, mqtt_port);
   //client.setCallback(callback);
 }
+
+//************* DECLARAR FUNCIONES ***************************
+//void callback(char* topic, byte* payload, unsigned int length);
+void relesinluz();
+void tempyhumd();
+void reconnect();
 
 void loop() {
   if (!client.connected()) {

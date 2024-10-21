@@ -48,9 +48,9 @@ PubSubClient client(cliente);
 
 //************* DECLARAR FUNCIONES ***************************
 //void callback(char* topic, byte* payload, unsigned int length);
-void reconnect();
-void relesinluz();
+/*void relesinluz();
 void tempyhumd();
+void reconnect(); */
 
 void setup() {
   Serial.begin(9600);
@@ -60,11 +60,15 @@ void setup() {
   digitalWrite(ledROJO, LOW);  // Apagar el LED inicialmente
   digitalWrite(ledVERDE, HIGH);  // Encender el LED inicialmente
 
-  if (Ethernet.begin(mac) == 0) {
+// ************** Inicio conexión de Red con DHCP *************************
+  /*if (Ethernet.begin(mac) == 0) {
     Serial.println("Falló para configurar Ethernet usando DHCP");
     // Intento congifurar usando la dirección IP en lugar de DHCP:
-    Ethernet.begin(mac, ip);
-  }
+    Ethernet.begin(mac, ip, gateway, subnet);
+  }*/
+// ************** Inicio conexión de Red con IP Fija *************************
+  Ethernet.begin(mac, ip, gateway, subnet);   // Iniciar con la IP estática definida inicialmente 
+  
   // Dejo el Ethernet Shield un segundo para inicializar:
   delay(1000);
   Serial.print("IP Address: ");
@@ -74,6 +78,10 @@ void setup() {
   client.setServer(mqtt_server, mqtt_port);
   //client.setCallback(callback);
 }
+
+void relesinluz();
+void tempyhumd();
+void reconnect();
 
 void loop() {
   if (!client.connected()) {
