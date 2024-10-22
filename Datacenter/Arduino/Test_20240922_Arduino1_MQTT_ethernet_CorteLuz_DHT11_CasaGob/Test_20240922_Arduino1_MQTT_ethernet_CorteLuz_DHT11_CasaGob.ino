@@ -55,13 +55,13 @@ void setup() {
   digitalWrite(ledROJO, LOW);  // Apagar el LED inicialmente
   digitalWrite(ledVERDE, HIGH);  // Encender el LED inicialmente
 // ************** Inicio conexión de Red con DHCP *************************
-  if (Ethernet.begin(mac) == 0) {
+  /*if (Ethernet.begin(mac) == 0) {
     Serial.println("Falló para configurar Ethernet usando DHCP");
     // Intento congifurar usando la dirección IP en lugar de DHCP:
     Ethernet.begin(mac, ip, gateway, subnet);   // IP estática definida como opción
-  } 
+  } */
 // ************** Inicio conexión de Red con IP Fija *************************
-//  Ethernet.begin(mac, ip, gateway, subnet);   // Iniciar con la IP estática definida inicialmente 
+  Ethernet.begin(mac, ip, gateway, subnet);   // Iniciar con la IP estática definida inicialmente 
   
   // Dejo el Ethernet Shield un segundo para inicializar:
   delay(1000);
@@ -75,9 +75,9 @@ void setup() {
 
 //************* DECLARAR FUNCIONES ***************************
 //void callback(char* topic, byte* payload, unsigned int length);
-void relesinluz();
-void tempyhumd();
-void reconnect();
+//void relesinluz();
+//void tempyhumd();
+//void reconnect();
 
 void loop() {
   if (!client.connected()) {

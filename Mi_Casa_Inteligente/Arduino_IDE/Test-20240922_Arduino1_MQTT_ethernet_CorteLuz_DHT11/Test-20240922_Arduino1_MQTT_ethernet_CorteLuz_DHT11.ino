@@ -14,7 +14,7 @@ byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };//Dirección MAC de nuestro 
 IPAddress ip(192, 168, 24, 151); // IP en Barrio NORTE
 IPAddress gateway(192, 168, 24, 1); //Pasarela en Barrio NORTE
 IPAddress subnet(255, 255, 255, 0);  //Mascara en Barrio NORTE
-IPAddress dnServer(192, 168, 100, 1);  //DNS en Barrio NORTE
+IPAddress dnServer(192, 168, 24, 1);  //DNS en Barrio NORTE
 
 // ********Configuración del servidor MQTT en Barrio NORTE*************
 const char *mqtt_server = "192.168.24.150";
@@ -78,10 +78,6 @@ void setup() {
   client.setServer(mqtt_server, mqtt_port);
   //client.setCallback(callback);
 }
-
-void relesinluz();
-void tempyhumd();
-void reconnect();
 
 void loop() {
   if (!client.connected()) {
