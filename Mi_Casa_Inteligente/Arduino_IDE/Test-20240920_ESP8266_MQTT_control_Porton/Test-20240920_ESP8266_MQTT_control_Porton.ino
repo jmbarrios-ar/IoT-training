@@ -1,5 +1,4 @@
-#include <WiFi.h>  //ESP32
-//#include <ESP8266WiFi.h>
+#include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
 // ***** Barrio NORTE *******
@@ -101,7 +100,7 @@ void reconnect() {
       Serial.println("Conectado!");
       
       // Suscribirse al tópico del relé del porton
-      client.subscribe("casa/porton/control");  //Barrios NORTE
+      client.subscribe("casa/porton/pulsar");  //Barrios NORTE
     } else {
       Serial.print("Falló la conexión, rc=");
       Serial.print(client.state());
