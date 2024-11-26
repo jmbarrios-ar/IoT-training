@@ -3,7 +3,7 @@
 
 // ***** Barrio NORTE *******
 // Configuración de WiFi
-const char* ssid = "247IASbros1";
+const char* ssid = "247IASbros0";
 const char* password = "GBxT0K6be99GmznHfUb7";
 // Configuración del servidor MQTT
 const char *mqtt_server = "192.168.24.150";
@@ -28,7 +28,7 @@ void callback(char* topic, byte* payload, unsigned int length);
 void reconnect();
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   // Inicializar el pin modulo relé del portón y el led piloto
   pinMode(RELE, OUTPUT);
   //pinMode(pinled, OUTPUT);
