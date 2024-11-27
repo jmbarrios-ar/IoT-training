@@ -28,7 +28,7 @@ void callback(char* topic, byte* payload, unsigned int length);
 void reconnect();
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   // Inicializar el pin modulo relé del portón y el led piloto
   pinMode(RELE, OUTPUT);
   //pinMode(pinled, OUTPUT);
