@@ -3,7 +3,7 @@
 
 // ***** Barrio NORTE *******
 // Configuración de WiFi
-const char* ssid = "247IASbros0";
+const char* ssid = "247IASbros1";
 const char* password = "GBxT0K6be99GmznHfUb7";
 // Configuración del servidor MQTT
 const char *mqtt_server = "192.168.24.150";
@@ -12,10 +12,11 @@ const char *mqtt_user = "usermqtt";
 const char *mqtt_pass = "Ia$247";
 
 // Definición del pin relé que activa porton
-#define RELE 26
+const int porton = 26;  // Conexión a la entrada del modulo relé
+//#define porton 26
 //#define pinled 27
-#define RELE_ON HIGH
-#define RELE_OFF LOW
+//#define HIGH HIGH
+//#define LOW LOW
 //#define LED_ON HIGH
 //#define LED_OFF LOW
 
@@ -30,10 +31,10 @@ void reconnect();
 void setup() {
   Serial.begin(115200);
   // Inicializar el pin modulo relé del portón y el led piloto
-  pinMode(RELE, OUTPUT);
+  pinMode(porton, OUTPUT);
   //pinMode(pinled, OUTPUT);
   // Apagar inicialmente el relé del portón y el led
-  digitalWrite(RELE, RELE_OFF);
+  digitalWrite(porton, LOW);
   //digitalWrite(pinled, LED_OFF);
   
   setup_wifi();
@@ -55,6 +56,7 @@ void setup_wifi() {
   Serial.print("Conectando a ");
   Serial.println(ssid);
 
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
@@ -83,10 +85,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
   
 //***** COMPARAR EL TÓPICO y ACTIVAR EL RELÉ SI EL PAYLOAD ES CORRECTO ******
   if (String(topic) == "casa/porton/pulsar" && messageTemp == "PULSE") {  //Barrio NORTE
-    digitalWrite(RELE, RELE_ON);  // Activar el relé
+    digitalWrite(porton, HIGH);  // Activar el relé
     //digitalWrite(pinled, LED_ON);
     delay(1000);  // Mantener el estado HIGH durante 1 segundo
-    digitalWrite(RELE, RELE_OFF);   // Desactivar el relay
+    digitalWrite(porton, LOW);   // Desactivar el relay
     //digitalWrite(pinled, LED_OFF);
     Serial.println("Pulso de 1 segundo enviado al relay");
   }
@@ -97,7 +99,7 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Intentando conexión MQTT...");
     // Creamos un cliente ID
-    String clientId = "esp8266_";
+    String clientId = "esp32_";
     clientId += String(random(0xffff), HEX);
     // Intentamos conectar
     if (client.connect(clientId.c_str(),mqtt_user,mqtt_pass)) {
