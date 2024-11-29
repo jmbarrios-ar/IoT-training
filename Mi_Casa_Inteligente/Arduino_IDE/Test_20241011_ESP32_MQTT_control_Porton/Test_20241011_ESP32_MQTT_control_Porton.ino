@@ -24,9 +24,9 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 
 //************* DECLARAR FUNCIONES ***************************
-void setup_wifi();
-void callback(char* topic, byte* payload, unsigned int length);
-void reconnect();
+//void setup_wifi();
+//void callback(char* topic, byte* payload, unsigned int length);
+//void reconnect();
 
 void setup() {
   Serial.begin(115200);
@@ -43,31 +43,46 @@ void setup() {
 }
 
 void loop() {
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("WiFi desconectado. Intentando reconectar...");
+    setup_wifi();
+  }
   if (!client.connected()) {
     reconnect();
   }
-  client.loop();
+  client.loop();  //Mantiene la conexión MQTT activa
+
+  // Opcional: Publicar un mensaje periódicamente
+  /*static unsigned long lastPublish = 0;
+  if (millis() - lastPublish > 5000) {
+    lastPublish = millis();
+    client.publish("test/topic", "Hello from ESP32!");
+    Serial.println("Mensaje publicado en el topic test/topic.");
+  }*/
 }
 
 //******* CONEXION WIFI ***********
 void setup_wifi() {
   delay(10);
-  Serial.println();
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
   Serial.print("Conectando a ");
   Serial.println(ssid);
 
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-
-  while (WiFi.status() != WL_CONNECTED) {
+  int retryCount = 0;
+  while (WiFi.status() != WL_CONNECTED && retryCount < 20) {
     delay(500);
     Serial.print(".");
+    retryCount++;
   }
-
-  Serial.println("");
-  Serial.println("WiFi conectado");
-  Serial.print("Dirección IP: ");
-  Serial.println(WiFi.localIP());
+  
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("WiFi conectado");
+    Serial.print("Dirección IP: ");
+    Serial.println(WiFi.localIP());
+  } else {
+    Serial.println("No se pudo conectar al WiFi");
+  }
 }
 
 // ********* RECEPCIÓN DE MENSAJES EN LOS TÓPICOS SUSCRIPTOS **********
@@ -83,7 +98,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("]: ");
   Serial.println(messageTemp);
   
-//***** COMPARAR EL TÓPICO y ACTIVAR EL RELÉ SI EL PAYLOAD ES CORRECTO ******
+  // Se compara al tópico suscripto y al payload para activar el relé SI es correcto //
   if (String(topic) == "casa/porton/pulsar" && messageTemp == "PULSE") {  //Barrio NORTE
     digitalWrite(porton, HIGH);  // Activar el relé
     //digitalWrite(pinled, LED_ON);
@@ -110,8 +125,8 @@ void reconnect() {
     } else {
       Serial.print("Falló la conexión, rc=");
       Serial.print(client.state());
-      Serial.println(" Reintentando en 5 segundos");
-      delay(5000);
+      Serial.println(" Reintentando en 2 segundos");
+      delay(2000);
     }
   }
 }
