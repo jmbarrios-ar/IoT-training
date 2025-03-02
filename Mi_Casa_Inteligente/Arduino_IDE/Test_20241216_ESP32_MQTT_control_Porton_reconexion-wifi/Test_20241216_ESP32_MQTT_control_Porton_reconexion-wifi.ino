@@ -6,7 +6,7 @@ const char* ssid = "247IASbros1";       // Nombre de la red WiFi
 const char* password = "GBxT0K6be99GmznHfUb7"; // Contraseña de la red WiFi
 
 // Configuración del servidor MQTT
-const char* mqttServer = "192.168.24.150"; // Cambia por tu servidor MQTT
+const char* mqttServer = "192.168.55.150"; // Cambia por tu servidor MQTT
 const int mqttPort = 1883;                   // Puerto del servidor MQTT
 const char* mqttUser = "usermqtt";                   // Usuario (si aplica)
 const char* mqttPassword = "Ia$247";               // Contraseña (si aplica)
