@@ -147,12 +147,12 @@ void tempyhumd() {
   String humStr = String(hi);
 
   // Publicar temperatura
-  client.publish(topicTemp, tempStr.c_str());
+  mqttclient.publish(topicTemp, tempStr.c_str());
   Serial.print("Temperatura en Casa: ");
   Serial.println(tempStr);
 
   // Publicar humedad
-  client.publish(topicHum, humStr.c_str());
+  mqttclient.publish(topicHum, humStr.c_str());
   Serial.print("Humedad en Casa: ");
   Serial.println(humStr);
 
@@ -169,7 +169,7 @@ void releventilador(){
     digitalWrite(ledVERDE, LOW);  //LED VERDE APAGADO
     if (lastReleState == HIGH)  {  //si previamente estaba apagado
       Serial.println("Corte de Energía Eléctrica detectado: Publicando OFF");
-      client.publish("casa/rele/estado", "OFF"); // Barrio NORTE
+      mqttclient.publish("casa/rele/estado", "OFF"); // Barrio NORTE
       lastReleState = LOW;
     }
   }
@@ -178,7 +178,7 @@ void releventilador(){
     digitalWrite(ledVERDE, HIGH); // LED ON
     if (lastReleState == LOW)   {  //si previamente estaba encendido
       Serial.println("La Energía Eléctrica se ha restablecido: Publicando ON");
-      client.publish("casa/rele/estado", "ON"); // Barrio NORTE
+      mqttclient.publish("casa/rele/estado", "ON"); // Barrio NORTE
       lastReleState = HIGH;
     }
   }
