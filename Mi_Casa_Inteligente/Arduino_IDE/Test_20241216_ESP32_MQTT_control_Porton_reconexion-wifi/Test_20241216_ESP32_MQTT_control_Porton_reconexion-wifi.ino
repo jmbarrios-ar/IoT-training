@@ -23,6 +23,7 @@ void setup() {
   Serial.begin(115200); // Inicializa comunicación serial
   pinMode(porton, OUTPUT); // Inicializar el pin modulo relé del portón y el led piloto
   digitalWrite(porton, LOW);  // Apagar inicialmente el relé del portón y el led
+  delay(1 * 60 * 1000); // Espera 1 minuto hasta que este disponible el WiFi 247IASbros1
   connectToWiFi();      // Conexión inicial al WiFi
   mqttClient.setServer(mqttServer, mqttPort); // Configura el servidor MQTT
   mqttClient.setCallback(mqttCallback);       // Asigna la función callback
