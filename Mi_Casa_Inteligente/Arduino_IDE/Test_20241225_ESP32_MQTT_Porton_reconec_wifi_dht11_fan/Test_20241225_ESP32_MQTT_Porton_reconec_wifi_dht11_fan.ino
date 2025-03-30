@@ -10,7 +10,7 @@ const char* ssid = "247IASbros1";       // Nombre de la red WiFi
 const char* password = "GBxT0K6be99GmznHfUb7"; // Contraseña de la red WiFi
 
 // ********* Configuración del servidor MQTT ********
-const char* mqttServer = "192.168.24.150"; // Cambia por tu servidor MQTT
+const char* mqttServer = "192.168.55.150"; // Cambia por tu servidor MQTT
 const int mqttPort = 1883;                   // Puerto del servidor MQTT
 const char* mqttUser = "usermqtt";                   // Usuario (si aplica)
 const char* mqttPassword = "Ia$247";               // Contraseña (si aplica)
@@ -72,6 +72,7 @@ void loop() {
 
 // Función para conectar al WiFi
 void connectToWiFi() {
+  delay(1 * 30 * 1000); // Espera 30 seg hasta que este disponible el WiFi 247IASbros1
   WiFi.begin(ssid, password);
   Serial.println("Conectando a WiFi...");
   
