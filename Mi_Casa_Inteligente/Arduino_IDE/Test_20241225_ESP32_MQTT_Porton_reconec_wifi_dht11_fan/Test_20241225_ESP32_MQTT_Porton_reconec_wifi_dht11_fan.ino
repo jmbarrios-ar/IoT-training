@@ -17,9 +17,16 @@ const char* mqttPassword = "Ia$247";               // Contraseña (si aplica)
 
 // ************ Config pines para relés que activan porton y ventilador ************
 const int porton = 26;  // Conexión a la entrada del modulo relé señal porton
-const int ventilador = 3;  // Conexión para relé control de Fan
-int lastReleState = HIGH; // de inicio el relé esta abierto
-const int val = 1; 
+const int fan1 = 5;  // Conexión para relé control de Fan1
+const int fan2 = 4;  // Conexión para relé control de Fan2
+//int lastReleState = HIGH; // de inicio el relé esta abierto
+//const int val = 1; 
+
+// *********** Variables para el control del tiempo ***********
+unsigned long previousMillis = 0;
+const long interval = 120 * 60 * 1000; // 120 minutos en milisegundos
+bool fan1State = false;
+bool fan2State = true; // Iniciar con el ventilador 2 encendido (alternado)
 
 // *********Config sensor de temperatura ***************
 int pin=2;
@@ -34,13 +41,15 @@ const char* topicHum = "casa/garage/dht11/humedad";          // Tópico para la 
 WiFiClient espClient;
 PubSubClient mqttClient(espClient);
 
-// Configuración inicial
+// *********** Configuración inicial ***********
 void setup() {
   Serial.begin(115200); // Inicializa comunicación serial
   pinMode(porton, OUTPUT); // Inicializar el pin modulo relé del portón y el led piloto
   digitalWrite(porton, LOW);  // Apagar inicialmente el relé del portón y el led
-  pinMode(ventilador, OUTPUT); // Inicializar el pin modulo relé del ventilador y el led piloto
-  digitalWrite(ventilador, LOW);  // Apagar inicialmente el relé del ventilador y el led
+  pinMode(fan1, OUTPUT); // Inicializar el pin modulo relé del ventilador1 y el led piloto
+  pinMode(fan2, OUTPUT); // Inicializar el pin modulo relé del ventilador2 y el led piloto
+  digitalWrite(fan1, LOW);  // Apagar inicialmente el relé del ventilador y el led
+  digitalWrite(fan2, LOW);  // Apagar inicialmente el relé del ventilador y el led
   connectToWiFi();      // Conexión inicial al WiFi
   mqttClient.setServer(mqttServer, mqttPort); // Configura el servidor MQTT
   mqttClient.setCallback(mqttCallback);       // Asigna la función callback
@@ -59,7 +68,7 @@ void loop() {
 
   mqttClient.loop(); // Mantiene la conexión MQTT viva
   tempyhumd();
-  releventilador();
+  controlfanes();
 
   // Opcional: Publicar un mensaje periódicamente
   /*static unsigned long lastPublish = 0;
@@ -161,8 +170,42 @@ void tempyhumd() {
   delay(6000);
 }
 
+//************ CONTROL DE VENTILADORES FAN1 Y FAN2 **************
+void controlfanes() {
+  unsigned long currentMillis = millis();
+  
+  // Control del modo alternado cada 120 minutos
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+    
+    // Alternar los estados de los ventiladores
+    fan1State = !fan1State;
+    fan2State = !fan2State;
+    
+    // Aplicar los nuevos estados a los relés
+    digitalWrite(RELAY_FAN1_PIN, fan1State ? HIGH : LOW);
+    digitalWrite(RELAY_FAN2_PIN, fan2State ? HIGH : LOW);
+    
+    //printFanStates();
+  }
+  
+  delay(1000); // Pequeña pausa para evitar sobrecarga
+}
+
+/*void printFanStates() {
+  Serial.println();
+  Serial.print("Estado actual - ");
+  Serial.print("FAN1: ");
+  Serial.print(fan1State ? "ENCENDIDO" : "APAGADO");
+  Serial.print(" | FAN2: ");
+  Serial.println(fan2State ? "ENCENDIDO" : "APAGADO");
+  Serial.print("Próximo cambio en: ");
+  Serial.print(interval / 60000);
+  Serial.println(" minutos");
+}*/
+
 //************ ACTIVACIÓN DE VENTILADOR FAN **************
-void releventilador(){
+/* void releventilador(){
   // Lectura del estado del Relé detector de energía eléctrica
   val = digitalRead(relePin);
   if (val == LOW)  {  //si está activado
@@ -183,4 +226,4 @@ void releventilador(){
       lastReleState = HIGH;
     }
   }
-}
+} */
