@@ -2,7 +2,7 @@
 #include <PubSubClient.h>
 #include <DHT11.h>
 
-#define DHTPIN 2 // Pin donde está conectado el DHT11
+#define DHTPIN 36 // Pin donde está conectado el DHT11
 #define DHTTYPE DHT11  // Tipo de sensor DHT (DHT11 o DHT22)
 
 // ********** Configuración de la red WiFi ******************
@@ -16,9 +16,9 @@ const char* mqttUser = "usermqtt";                   // Usuario (si aplica)
 const char* mqttPassword = "Ia$247";               // Contraseña (si aplica)
 
 // ************ Config pines para relés que activan porton y ventilador ************
-const int porton = 26;  // Conexión a la entrada del modulo relé señal porton
-const int fan1 = 5;  // Conexión para relé control de Fan1
-const int fan2 = 4;  // Conexión para relé control de Fan2
+const int porton = 25;  // Conexión a la entrada del modulo relé señal porton
+const int fan1 = 26;  // Conexión para relé control de Fan1
+const int fan2 = 27;  // Conexión para relé control de Fan2
 //int lastReleState = HIGH; // de inicio el relé esta abierto
 //const int val = 1; 
 
