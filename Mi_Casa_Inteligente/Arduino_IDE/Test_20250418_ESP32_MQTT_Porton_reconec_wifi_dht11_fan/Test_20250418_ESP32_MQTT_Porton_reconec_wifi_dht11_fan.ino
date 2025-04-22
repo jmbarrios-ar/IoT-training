@@ -1,6 +1,5 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
-//#include <DHT11.h>
 #include <DHT.h>
 
 #define DHTPIN 21 // Pin donde está conectado el DHT11
@@ -31,8 +30,6 @@ bool fan1State = false;
 bool fan2State = true; // Iniciar con el ventilador 2 encendido (alternado)
 
 // *********Config sensor de temperatura ***************
-//int pin=35;
-//DHT11 dht11(pin);  // Asignacion del pin del DHT11, el RTC tiene SDA en el A4 (SDA del arduino) y el SCL en el A5 (SCL del arduino)
 //const int umbral = 24;  //Temperatura que activa alarma
 DHT dht11(DHTPIN, DHTTYPE);
 
@@ -44,19 +41,16 @@ const char* topicHum = "casa/garage/dht11/humedad";          // Tópico para la 
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-// *********** Configuración inicial ***********
-
 //************* DECLARAR FUNCIONES ***************************
 //void setup_wifi();
 //void callback(char* topic, byte* payload, unsigned int length);
 //void reconnect();
 
-// Función para conectar al WiFi
+// ************* Función para conectar al WiFi ********************
 void setup_wifi() {
   delay(1 * 30 * 1000); // Espera 30 seg hasta que este disponible el WiFi 247IASbros1
   WiFi.begin(ssid, password);
   Serial.println("Conectando a WiFi...");
-  
   int retryCount = 0;
   while (WiFi.status() != WL_CONNECTED && retryCount < 20) {
     delay(500);
@@ -71,7 +65,7 @@ void setup_wifi() {
   }
 }
 
-// Función para reconectar al servidor MQTT
+// ************ Función para reconectar al servidor MQTT *******************
 void reconnect() {
   while (!client.connected()) {
     Serial.print("Intentando conexión MQTT...");
@@ -93,7 +87,7 @@ void reconnect() {
   }
 }
 
-// Función callback para manejar mensajes MQTT entrantes
+// ***********Función callback para manejar mensajes MQTT entrantes**************
 void callback(char* topic, byte* payload, unsigned int length) {
   String messageTemp;
   Serial.print("Mensaje recibido en topic: ");
@@ -109,7 +103,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   if (String(topic) == "casa/porton/control" && messageTemp == "PULSO") {  //Barrio NORTE
     Serial.println("Pulso de 1 segundo enviado al rele");
     digitalWrite(porton, HIGH);  // Activar el relé
-    delay(10000);  // Mantener el estado HIGH durante 1 segundo
+    delay(1000);  // Mantener el estado HIGH durante 1 segundo
     digitalWrite(porton, LOW);   // Desactivar el relay
     Serial.println("El rele se desactivó");
     
@@ -210,8 +204,6 @@ void loop() {
     Serial.println("Mensaje publicado en el topic test/topic.");
   }*/
 }
-
-
 
 /*void printFanStates() {
   Serial.println();
