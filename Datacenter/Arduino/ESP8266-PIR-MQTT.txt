@@ -1,1 +1,10 @@
 Hi, diseña y entrégame un sketch ó código de Arduino para el siguiente proyecto: se tiene un kit desarrollo ESP8266, un sensor PIR HC-sr501 y dos leds (verde y rojo). Se desea detectar en una zona de aparcamiento de bicicletas, de 2mts ancho x 3mts largo, cuando exista un movimiento de personas que crucen y accedan a esa zona. Durante el estado de espera y sin detección de movimiento el led (Verde) se mantiene encendido y el led (Rojo) apagado. Cuando se active el sensor PIR por alguna detección de movimiento, el pulso de activación debe mantenerse durante 10 segundos y luego volver a su estado de espera. En el mismo momento de detección debe encenderse el led (rojo) con un parpadeo cada 500 milisegundos y el led (verde) se apaga. También en el instante del disparo o detección, con una conexión hacia un servidor MQTT ya establecida, se debe enviar un Payload=MOVIMIENTO para un tópico=negocio/oficina/bicicletas. Esto se utilizará para enviar notificaciones mediante un servidor Home Assistant ya disponible en el mismo ámbito de subred LAN Y WLAN. Además del código para el IDE Arduino, entrégame un esquema de conexión eléctrico de todos los componentes intervinientes en un formato de imagen jpg.  Agrega las sugerencias y recomendaciones necesarias para que el despliegue instalado y conectado resulte funcional.
+
+Bien entonces, ajusta las líneas al código inicial "Detector_Movimiento_Bicicletas_ESP8266_MQTT.ino", y solo agrega las siguientes mejoras:
+✅ Reconexión automática WiFi sin bloquear el programa.
+✅ Anti-rebote y filtrado del PIR.
+✅ Lógica basada en millis() (sin delay()), permitiendo que el ESP siga atendiendo WiFi y MQTT mientras gestiona el parpadeo y el temporizador.
+✅ Configuración mediante constantes al inicio del código.
+✅ Código comentado mínimamente y fácil de mantener.
+Muestrame el sktech definitivo y funcional.
+
