@@ -8,3 +8,6 @@ Bien entonces, ajusta las líneas al código inicial "Detector_Movimiento_Bicicl
 ✅ Código comentado mínimamente y fácil de mantener.
 Muestrame el sktech definitivo y funcional.
 
+
+
+
