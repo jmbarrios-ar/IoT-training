@@ -23,27 +23,29 @@
 // #define UBICACION_RACKS
 
 #ifdef UBICACION_REFRIGERACION
-  const char* MQTT_TOPIC   = "datacenter/refrigeracion/temperatura";
+  const char* TOPIC_TEMP   = "datacenter/refrigeracion/temperatura";
+  const char* TOPIC_HUM    = "datacenter/refrigeracion/humedad";
   const char* MQTT_PAYLOAD = "UMBRAL";
   const char* DEVICE_ID    = "ESP8266-Refrigeracion";
 #endif
 
-#ifdef UBICACION_RACKS
-  const char* MQTT_TOPIC   = "datacenter/servidores/temperatura";
-  const char* MQTT_PAYLOAD = "RACKS";
-  const char* DEVICE_ID    = "ESP8266-Racks";
-#endif
+//#ifdef UBICACION_RACKS
+//  const char* TOPIC_TEMP   = "datacenter/servidores/temperatura";
+//  const char* TOPIC_HUM    = "datacenter/servidores/humedad";
+//  const char* MQTT_PAYLOAD  = "RACKS";
+//  const char* DEVICE_ID    = "ESP8266-Racks";
+//#endif
 
 // ---------------------------------------------------------------------------
 // CONFIGURACION DE RED Y MQTT
 // ---------------------------------------------------------------------------
-const char* WIFI_SSID     = "TU_SSID";
-const char* WIFI_PASSWORD = "TU_PASSWORD";
+const char* WIFI_SSID     = "datacenter";
+const char* WIFI_PASSWORD = "NOv22$1nicI0";
 
-const char* MQTT_SERVER   = "192.168.55.150";  // IP del broker MQTT / Home Assistant
+const char* MQTT_SERVER   = "172.16.16.27";  // IP del broker MQTT / Home Assistant
 const int   MQTT_PORT     = 1883;
-const char* MQTT_USER     = "";                // dejar "" si el broker no requiere autenticacion
-const char* MQTT_PASS     = "";
+const char* MQTT_USER     = "adminmqtt";                // dejar "" si el broker no requiere autenticacion
+const char* MQTT_PASS     = "Ia$247";
 
 // ---------------------------------------------------------------------------
 // CONFIGURACION DE PINES (GPIO) - NodeMCU ESP8266
@@ -175,6 +177,24 @@ void leerYEvaluarSensor() {
     Serial.println("Error leyendo el sensor DHT11");
     return;
   }
+// Convertir los valores float a int
+  int ti;
+  int hi;
+  ti = (int) temperatura;
+  hi = (int) humedad;
+  // Publicar los valores en los tópicos MQTT
+  String tempStr = String(ti);
+  String humStr = String(hi);
+ 
+  // Publicar temperatura
+  client.publish(TOPIC_TEMP, tempStr.c_str());
+  Serial.print("Temperatura Área Refrigeración: ");
+  Serial.println(tempStr);
+
+  // Publicar humedad
+  client.publish(TOPIC_HUM, humStr.c_str());
+  Serial.print("Humedad Área Refrigeración: ");
+  Serial.println(humStr);
 
   Serial.printf("Temp: %.1f C  Hum: %.1f %%\n", temperatura, humedad);
 
@@ -198,10 +218,12 @@ void leerYEvaluarSensor() {
 // ---------------------------------------------------------------------------
 void publicarAlarma() {
   if (mqttClient.connected()) {
-    mqttClient.publish(MQTT_TOPIC, MQTT_PAYLOAD);
-    Serial.print("Publicado -> topico: ");
-    Serial.print(MQTT_TOPIC);
-    Serial.print(" | payload: ");
+    mqttClient.publish(TOPIC_TEMP
+, MQTT_PAYLOAD);
+     Serial.print("Publicado -> topico: ");
+    Serial.print(TOPIC_TEMP
+);
+    Serial.print(" | payload: "); 
     Serial.println(MQTT_PAYLOAD);
   } else {
     Serial.println("No se pudo publicar: MQTT desconectado");
