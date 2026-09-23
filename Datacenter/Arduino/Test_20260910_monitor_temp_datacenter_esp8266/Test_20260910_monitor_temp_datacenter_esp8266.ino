@@ -14,7 +14,7 @@
 
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>   // Instalar libreria "PubSubClient" (Nick O'Leary) desde el Library Manager
-#include <DHT.h>            // Instalar libreria "DHT sensor library" (Adafruit) + "Adafruit Unified Sensor"
+#include <DHT.h>        // Instalar libreria "DHT sensor library" (Adafruit) + "Adafruit Unified Sensor"
 
 // ---------------------------------------------------------------------------
 // CONFIGURACION POR UBICACION -> elegir UNA sola linea (comentar la otra)
@@ -39,12 +39,18 @@
 // ---------------------------------------------------------------------------
 // CONFIGURACION DE RED Y MQTT
 // ---------------------------------------------------------------------------
-const char* WIFI_SSID     = "datacenter";
-const char* WIFI_PASSWORD = "NOv22$1nicI0";
+//const char* WIFI_SSID     = "datacenter";
+//const char* WIFI_PASSWORD = "NOv22$1nicI0";
+const char* WIFI_SSID     = "247IASbrosHA";
+const char* WIFI_PASSWORD = "GBxT0K6be99GmznHfUb247$!";
 
-const char* MQTT_SERVER   = "172.16.16.27";  // IP del broker MQTT / Home Assistant
+//const char* MQTT_SERVER   = "172.16.16.27";  // IP del broker MQTT / Home Assistant
+//const int   MQTT_PORT     = 1883;
+//const char* MQTT_USER     = "adminmqtt";           // dejar "" si el broker no requiere autenticacion
+//const char* MQTT_PASS     = "Ia$247";
+const char* MQTT_SERVER   = "192.168.55.150";  // IP del broker MQTT / Home Assistant
 const int   MQTT_PORT     = 1883;
-const char* MQTT_USER     = "adminmqtt";                // dejar "" si el broker no requiere autenticacion
+const char* MQTT_USER     = "usermqtt";           // dejar "" si el broker no requiere autenticacion
 const char* MQTT_PASS     = "Ia$247";
 
 // ---------------------------------------------------------------------------
@@ -187,12 +193,12 @@ void leerYEvaluarSensor() {
   String humStr = String(hi);
  
   // Publicar temperatura
-  client.publish(TOPIC_TEMP, tempStr.c_str());
+  mqttClient.publish(TOPIC_TEMP, tempStr.c_str());
   Serial.print("Temperatura Área Refrigeración: ");
   Serial.println(tempStr);
 
   // Publicar humedad
-  client.publish(TOPIC_HUM, humStr.c_str());
+  mqttClient.publish(TOPIC_HUM, humStr.c_str());
   Serial.print("Humedad Área Refrigeración: ");
   Serial.println(humStr);
 
@@ -218,8 +224,7 @@ void leerYEvaluarSensor() {
 // ---------------------------------------------------------------------------
 void publicarAlarma() {
   if (mqttClient.connected()) {
-    mqttClient.publish(TOPIC_TEMP
-, MQTT_PAYLOAD);
+    mqttClient.publish(TOPIC_TEMP, MQTT_PAYLOAD);
      Serial.print("Publicado -> topico: ");
     Serial.print(TOPIC_TEMP
 );
