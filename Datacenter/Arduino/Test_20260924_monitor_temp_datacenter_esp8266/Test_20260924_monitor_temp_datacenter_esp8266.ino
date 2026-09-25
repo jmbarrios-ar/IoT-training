@@ -38,17 +38,19 @@
 // ---------------------------------------------------------------------------
 // CONFIGURACION DE RED Y MQTT
 // ---------------------------------------------------------------------------
-const char* WIFI_SSID     = "datacenter";
-const char* WIFI_PASSWORD = "NOv22$1nicI0";
+//const char* WIFI_SSID     = "datacenter";
+//const char* WIFI_PASSWORD = "NOv22$1nicI0";
+const char* WIFI_SSID     = "247IASbrosHA";
+const char* WIFI_PASSWORD = "GBxT0K6be99GmznHfUb247$!";
 
-const char* MQTT_SERVER   = "172.16.16.27";  // IP del broker MQTT / Home Assistant
-const int   MQTT_PORT     = 1883;
-const char* MQTT_USER     = "adminmqtt";                // dejar "" si el broker no requiere autenticacion
-const char* MQTT_PASS     = "Ia$247";
-//const char* MQTT_SERVER   = "192.168.55.150";  // IP del broker MQTT / Home Assistant
+//const char* MQTT_SERVER   = "172.16.16.27";  // IP del broker MQTT / Home Assistant
 //const int   MQTT_PORT     = 1883;
-//const char* MQTT_USER     = "usermqtt";           // dejar "" si el broker no requiere autenticacion
+//const char* MQTT_USER     = "adminmqtt";                // dejar "" si el broker no requiere autenticacion
 //const char* MQTT_PASS     = "Ia$247";
+const char* MQTT_SERVER   = "192.168.55.150";  // IP del broker MQTT / Home Assistant
+const int   MQTT_PORT     = 1883;
+const char* MQTT_USER     = "usermqtt";           // dejar "" si el broker no requiere autenticacion
+const char* MQTT_PASS     = "Ia$247";
 
 // ---------------------------------------------------------------------------
 // CONFIGURACION DE PINES (GPIO) - NodeMCU ESP8266
