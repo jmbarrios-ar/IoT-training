@@ -38,8 +38,10 @@ bool usandoDHCP = true;
 //const char *mqtt_server = "172.16.16.98";   // Datacenter Test
 const char *mqtt_server = "192.168.55.150";   // Barrio NORTE
 const int   mqtt_port   = 1883;
-const char *mqtt_user   = "usermqtt";
+//const char *mqtt_user   = "adminmqtt";   // Datacenter
+const char *mqtt_user   = "usermqtt";   // Barrio NORTE
 const char *mqtt_pass   = "Ia$247";
+//const char *mqtt_clientId = "arduino_uno_datacenter"; // ID fijo y único por equipo
 const char *mqtt_clientId = "arduino_uno_test_norte"; // ID fijo y único por equipo
  
 // Tópicos MQTT
