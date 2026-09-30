@@ -12,18 +12,22 @@ void(* Resetea) (void) = 0;//Funcíon Reset por soft para el arduino (como si ap
 // ********** ETHERNET config. DATACENTER *********************************
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };//Dirección MAC de nuestro módulo ethernet
 //IPAddress ip(172, 16, 16, 41); // IP en Datacenter para Arduino UNO actual en Sala Comunicaciones
-IPAddress ip(172, 16, 16, 141); // IP en Datacenter para Arduino UNO actual en Sala Comunicaciones
-IPAddress gateway(172, 16, 16, 16); //Pasarela en Datacenter
+//IPAddress ip(172, 16, 16, 141); // IP en Datacenter para Arduino UNO Test actual en Sala Comunicaciones
+IPAddress ip(192, 168, 55, 124); // IP en Datacenter para Arduino UNO Test actual en Barrio NORTE
+//IPAddress gateway(172, 16, 16, 16); //Pasarela en Datacenter
+IPAddress gateway(192, 168, 55, 1); //Pasarela en Barrio NORTE
 IPAddress subnet(255, 255, 255, 0);  //Mascara en Datacenter
 //IPAddress dnServer(8, 8, 8, 8);  //DNS en Datacenter
 
 // ******** Configuración del servidor MQTT en Datacenter ***************
 //const char *mqtt_server = "45.186.124.70";
 //const char *mqtt_server = "123.123.123.140";
-//const char *mqtt_server = "172.16.16.27";
-const char *mqtt_server = "172.16.16.98";
+//const char *mqtt_server = "172.16.16.27";    // Server MQTT en Datacenter
+//const char *mqtt_server = "172.16.16.98";   // Server MQTT Test en Datacenter
+const char *mqtt_server = "192.168.55.150";   // Server MQTT en Barrio NORTE
 const int mqtt_port = 1883;
-const char *mqtt_user = "adminmqtt";
+//const char *mqtt_user = "adminmqtt";
+const char *mqtt_user = "usermqtt";
 const char *mqtt_pass = "Ia$247";
 
 // ************** Config relé detector de corte de energía **********************
@@ -42,9 +46,14 @@ DHT11 dht11(pin);  // Asignacion del pin del DHT11, el RTC tiene SDA en el A4 (S
 //int umbral = 28;  //Temperatura que activa alarma
 
 // Tópicos MQTT Datacenter
-const char* topicTemp = "datacenter/dht11/temperatura";     // Tópico para la temperatura
-const char* topicHum = "datacenter/dht11/humedad";          // Tópico para la humedad
-const char* topicAgua = "datacenter/entrepiso/agua";          // Tópico para la humedad
+//const char* topicTemp = "datacenter/dht11/temperatura";     // Tópico para la temperatura
+const char* topicTemp = "casa/climatizacion/temperatura";     // Tópico para la temperatura
+//const char* topicHum = "datacenter/dht11/humedad";          // Tópico para la humedad
+const char* topicHum = "casa/climatizacion/humedad";          // Tópico para la humedad
+//const char* topicAgua = "datacenter/entrepiso/agua";          // Tópico para el agua
+const char* topicAgua = "casa/entrepiso/agua";          // Tópico para el agua
+//const char* topicGE = "datacenter/grupo/estado";          // Tópico para el Grupo Electrógeno
+const char* topicGE = "casa/rele/estado";          // Tópico para el Corte Energía
 
 // Crear cliente Ethernet y MQTT
 EthernetClient cliente;
@@ -105,7 +114,7 @@ void reconnect() {
       Serial.println("Conectado!");
       
       // Suscribirse al tópico
-      client.subscribe("datacenter/grupo/estado");  // Datacenter
+      client.subscribe(topicGE);  // Datacenter
     } else {
       Serial.print("Falló la conexión, rc=");
       Serial.print(client.state());
@@ -124,7 +133,7 @@ void relegrupoelectrogeno(){
     digitalWrite(ledVERDE, LOW);  //LED VERDE APAGADO
     if (lastReleState == LOW)  {  //si previamente estaba apagado
       Serial.println("Grupo Electrógeno encendido: Publicando ON");
-      client.publish("datacenter/grupo/estado", "ON"); // Datacenter
+      client.publish(topicGE, "ON"); // Datacenter
       lastReleState = HIGH;
     }
   }
@@ -133,7 +142,7 @@ void relegrupoelectrogeno(){
     digitalWrite(ledVERDE, HIGH); // LED ON
     if (lastReleState == HIGH)   {  //si previamente estaba encendido
       Serial.println("Grupo Electrógeno apagado. Publicando OFF");
-      client.publish("datacenter/grupo/estado", "OFF"); // Datacenter
+      client.publish(topicGE, "OFF"); // Datacenter
       lastReleState = LOW;
     }
   }
