@@ -63,7 +63,7 @@ const uint8_t       MAX_FALLOS_MQTT      = 24;    // ~2 min sin broker -> reset 
  
 // ********** SENSOR DE AGUA (calibrar con el monitor serie) *********
 const int     UMBRAL_AGUA_ON  = 200;  // >= este valor: hay agua
-const int     UMBRAL_AGUA_OFF = 100;  // <= este valor: no hay agua (histéresis)
+const int     UMBRAL_AGUA_OFF = 50;  // <= este valor: no hay agua (histéresis)
 const uint8_t LECTURAS_CONFIRMACION = 4; // lecturas consecutivas (4 x 500 ms = 2 s)
  
 // ********** OBJETOS *********************************
@@ -233,8 +233,7 @@ void aguadeteccion() {
   } else {
     contAgua = 0;
   }
- 
-  // Publica UNA sola vez por cambio de estado. Solo se marca como publicado
+   // Publica UNA sola vez por cambio de estado. Solo se marca como publicado
   // si el broker lo aceptó; si MQTT estaba caído, se envía al reconectar.
   if (aguaEstado != aguaPublicada && client.connected()) {
     if (client.publish(topicAgua, aguaEstado ? "AGUAS" : "NOAGUA")) {
