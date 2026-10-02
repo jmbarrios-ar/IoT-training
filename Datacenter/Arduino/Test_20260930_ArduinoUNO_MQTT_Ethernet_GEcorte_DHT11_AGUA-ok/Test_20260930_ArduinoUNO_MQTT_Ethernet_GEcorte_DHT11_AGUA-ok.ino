@@ -20,6 +20,7 @@ const uint8_t PIN_RELE  = 3;   // COM del relé (con pull-down de 10k a GND)
 const uint8_t LED_ROJO  = 4;   // GE ENCENDIDO  (ver nota: pin 4 = CS de la SD del Ethernet Shield)
 const uint8_t LED_VERDE = 5;   // GE APAGADO
 const uint8_t PIN_AGUA  = A0;  // Señal S del sensor de agua
+const uint8_t PIN_AGUA_VCC = 7; // Alimentación (+) del sensor de agua: se enciende solo al leer
  
 // ********** ETHERNET *********************************
 // IMPORTANTE: cada Arduino de la red debe tener una MAC distinta (Test y Producción).
@@ -65,6 +66,7 @@ const uint8_t       MAX_FALLOS_MQTT      = 24;    // ~2 min sin broker -> reset 
 const int     UMBRAL_AGUA_ON  = 200;  // >= este valor: hay agua
 const int     UMBRAL_AGUA_OFF = 50;  // <= este valor: no hay agua (histéresis)
 const uint8_t LECTURAS_CONFIRMACION = 4; // lecturas consecutivas (4 x 500 ms = 2 s)
+const unsigned long T_ESTABILIZA_AGUA = 10; // ms con el sensor encendido antes de leer
  
 // ********** OBJETOS *********************************
 DHT11 dht11(PIN_DHT);
@@ -102,6 +104,8 @@ void setup() {
   pinMode(LED_VERDE, OUTPUT);   // Led indicador SIN corte energía
   digitalWrite(LED_ROJO, LOW);  // Apagar el LED inicialmente
   digitalWrite(LED_VERDE, HIGH);  // Encender el LED inicialmente
+  pinMode(PIN_AGUA_VCC, OUTPUT);
+  digitalWrite(PIN_AGUA_VCC, LOW);  // sensor de agua apagado en reposo (evita corrosión)
  
   // ***** Red: DHCP y, si falla, IP fija *****
   if (Ethernet.begin(mac) == 0) {
@@ -214,7 +218,12 @@ void aguadeteccion() {
   if (millis() - tAgua < INTERVALO_AGUA) return;
   tAgua = millis();
  
+ // Encender el sensor solo durante la lectura (~10 ms cada 500 ms = 2% del tiempo)
+  digitalWrite(PIN_AGUA_VCC, HIGH);
+  delay(T_ESTABILIZA_AGUA);            // estabilización de la señal
+  analogRead(PIN_AGUA);                // lectura descartada (asienta el ADC)
   int lectura = analogRead(PIN_AGUA);
+  digitalWrite(PIN_AGUA_VCC, LOW);     // apagar el sensor
   //Serial.print(F("Sensor agua (raw): ")); Serial.println(lectura);  // descomentar para calibrar
  
   // Histéresis: activa con UMBRAL_ON, desactiva con UMBRAL_OFF
