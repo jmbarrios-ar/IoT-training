@@ -24,36 +24,37 @@ const uint8_t PIN_AGUA_VCC = 7; // Alimentación (+) del sensor de agua: se enci
  
 // ********** ETHERNET *********************************
 // IMPORTANTE: cada Arduino de la red debe tener una MAC distinta (Test y Producción).
-byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+//byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };  // Datacenter produccion
+byte mac[] = { 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };  // Datacenter testing
 //IPAddress ip(172, 16, 16, 41);     // Datacenter - Arduino UNO producción
-//IPAddress ip(172, 16, 16, 141);    // Datacenter - Arduino UNO Test
-IPAddress ip(192, 168, 55, 124);     // Barrio NORTE - Arduino UNO Test
-//IPAddress gateway(172, 16, 16, 16);// Datacenter
-IPAddress gateway(192, 168, 55, 1);  // Barrio NORTE
+IPAddress ip(172, 16, 16, 141);    // Datacenter - Arduino UNO Test
+//IPAddress ip(192, 168, 55, 124);     // Barrio NORTE - Arduino UNO Test
+IPAddress gateway(172, 16, 16, 16);// Datacenter
+//IPAddress gateway(192, 168, 55, 1);  // Barrio NORTE
 IPAddress subnet(255, 255, 255, 0);
 IPAddress dnServer(8, 8, 8, 8);
 bool usandoDHCP = true;
  
 // ********** MQTT *********************************
 //const char *mqtt_server = "172.16.16.27";   // Datacenter
-//const char *mqtt_server = "172.16.16.98";   // Datacenter Test
-const char *mqtt_server = "192.168.55.150";   // Barrio NORTE
+const char *mqtt_server = "172.16.16.98";   // Datacenter Test
+//const char *mqtt_server = "192.168.55.150";   // Barrio NORTE
 const int   mqtt_port   = 1883;
-//const char *mqtt_user   = "adminmqtt";   // Datacenter
-const char *mqtt_user   = "usermqtt";   // Barrio NORTE
+const char *mqtt_user   = "adminmqtt";   // Datacenter
+//const char *mqtt_user   = "usermqtt";   // Barrio NORTE
 const char *mqtt_pass   = "Ia$247";
-//const char *mqtt_clientId = "arduino_uno_datacenter"; // ID fijo y único por equipo
-const char *mqtt_clientId = "arduino_uno_test_norte"; // ID fijo y único por equipo
+const char *mqtt_clientId = "arduino_uno_datacenter"; // ID fijo y único por equipo
+//const char *mqtt_clientId = "arduino_uno_test_norte"; // ID fijo y único por equipo
  
 // Tópicos MQTT
-//const char* topicTemp = "datacenter/dht11/temperatura";
-const char* topicTemp = "casa/climatizacion/temperatura";
-//const char* topicHum  = "datacenter/dht11/humedad";
-const char* topicHum  = "casa/climatizacion/humedad";
-//const char* topicAgua = "datacenter/entrepiso/agua";
-const char* topicAgua = "casa/entrepiso/agua";
-//const char* topicGE   = "datacenter/grupo/estado";
-const char* topicGE   = "casa/rele/estado";
+const char* topicTemp = "datacenter/dht11/temperatura";
+//const char* topicTemp = "casa/climatizacion/temperatura";
+const char* topicHum  = "datacenter/dht11/humedad";
+//const char* topicHum  = "casa/climatizacion/humedad";
+const char* topicAgua = "datacenter/entrepiso/agua";
+//const char* topicAgua = "casa/entrepiso/agua";
+const char* topicGE   = "datacenter/grupo/estado";
+//const char* topicGE   = "casa/rele/estado";
  
 // ********** TIEMPOS (ms) *********************************
 const unsigned long INTERVALO_DHT        = 30000; // Lectura/publicación temp. y humedad
