@@ -20,39 +20,41 @@ const uint8_t PIN_RELE  = 3;   // COM del relé (con pull-down de 10k a GND)
 const uint8_t LED_ROJO  = 4;   // GE ENCENDIDO  (ver nota: pin 4 = CS de la SD del Ethernet Shield)
 const uint8_t LED_VERDE = 5;   // GE APAGADO
 const uint8_t PIN_AGUA  = A0;  // Señal S del sensor de agua
+const uint8_t PIN_AGUA_VCC = 7; // Alimentación (+) del sensor de agua: se enciende solo al leer
  
 // ********** ETHERNET *********************************
 // IMPORTANTE: cada Arduino de la red debe tener una MAC distinta (Test y Producción).
-byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+//byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };  // Datacenter produccion
+byte mac[] = { 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };  // Datacenter testing
 //IPAddress ip(172, 16, 16, 41);     // Datacenter - Arduino UNO producción
-//IPAddress ip(172, 16, 16, 141);    // Datacenter - Arduino UNO Test
-IPAddress ip(192, 168, 55, 124);     // Barrio NORTE - Arduino UNO Test
-//IPAddress gateway(172, 16, 16, 16);// Datacenter
-IPAddress gateway(192, 168, 55, 1);  // Barrio NORTE
+IPAddress ip(172, 16, 16, 141);    // Datacenter - Arduino UNO Test
+//IPAddress ip(192, 168, 55, 124);     // Barrio NORTE - Arduino UNO Test
+IPAddress gateway(172, 16, 16, 16);// Datacenter
+//IPAddress gateway(192, 168, 55, 1);  // Barrio NORTE
 IPAddress subnet(255, 255, 255, 0);
 IPAddress dnServer(8, 8, 8, 8);
 bool usandoDHCP = true;
  
 // ********** MQTT *********************************
 //const char *mqtt_server = "172.16.16.27";   // Datacenter
-//const char *mqtt_server = "172.16.16.98";   // Datacenter Test
-const char *mqtt_server = "192.168.55.150";   // Barrio NORTE
+const char *mqtt_server = "172.16.16.98";   // Datacenter Test
+//const char *mqtt_server = "192.168.55.150";   // Barrio NORTE
 const int   mqtt_port   = 1883;
-//const char *mqtt_user   = "adminmqtt";   // Datacenter
-const char *mqtt_user   = "usermqtt";   // Barrio NORTE
+const char *mqtt_user   = "adminmqtt";   // Datacenter
+//const char *mqtt_user   = "usermqtt";   // Barrio NORTE
 const char *mqtt_pass   = "Ia$247";
-//const char *mqtt_clientId = "arduino_uno_datacenter"; // ID fijo y único por equipo
-const char *mqtt_clientId = "arduino_uno_test_norte"; // ID fijo y único por equipo
+const char *mqtt_clientId = "arduino_uno_datacenter"; // ID fijo y único por equipo
+//const char *mqtt_clientId = "arduino_uno_test_norte"; // ID fijo y único por equipo
  
 // Tópicos MQTT
-//const char* topicTemp = "datacenter/dht11/temperatura";
-const char* topicTemp = "casa/climatizacion/temperatura";
-//const char* topicHum  = "datacenter/dht11/humedad";
-const char* topicHum  = "casa/climatizacion/humedad";
-//const char* topicAgua = "datacenter/entrepiso/agua";
-const char* topicAgua = "casa/entrepiso/agua";
-//const char* topicGE   = "datacenter/grupo/estado";
-const char* topicGE   = "casa/rele/estado";
+const char* topicTemp = "datacenter/dht11/temperatura";
+//const char* topicTemp = "casa/climatizacion/temperatura";
+const char* topicHum  = "datacenter/dht11/humedad";
+//const char* topicHum  = "casa/climatizacion/humedad";
+const char* topicAgua = "datacenter/entrepiso/agua";
+//const char* topicAgua = "casa/entrepiso/agua";
+const char* topicGE   = "datacenter/grupo/estado";
+//const char* topicGE   = "casa/rele/estado";
  
 // ********** TIEMPOS (ms) *********************************
 const unsigned long INTERVALO_DHT        = 30000; // Lectura/publicación temp. y humedad
@@ -65,6 +67,7 @@ const uint8_t       MAX_FALLOS_MQTT      = 24;    // ~2 min sin broker -> reset 
 const int     UMBRAL_AGUA_ON  = 200;  // >= este valor: hay agua
 const int     UMBRAL_AGUA_OFF = 50;  // <= este valor: no hay agua (histéresis)
 const uint8_t LECTURAS_CONFIRMACION = 4; // lecturas consecutivas (4 x 500 ms = 2 s)
+const unsigned long T_ESTABILIZA_AGUA = 10; // ms con el sensor encendido antes de leer
  
 // ********** OBJETOS *********************************
 DHT11 dht11(PIN_DHT);
@@ -102,6 +105,8 @@ void setup() {
   pinMode(LED_VERDE, OUTPUT);   // Led indicador SIN corte energía
   digitalWrite(LED_ROJO, LOW);  // Apagar el LED inicialmente
   digitalWrite(LED_VERDE, HIGH);  // Encender el LED inicialmente
+  pinMode(PIN_AGUA_VCC, OUTPUT);
+  digitalWrite(PIN_AGUA_VCC, LOW);  // sensor de agua apagado en reposo (evita corrosión)
  
   // ***** Red: DHCP y, si falla, IP fija *****
   if (Ethernet.begin(mac) == 0) {
@@ -214,7 +219,12 @@ void aguadeteccion() {
   if (millis() - tAgua < INTERVALO_AGUA) return;
   tAgua = millis();
  
+ // Encender el sensor solo durante la lectura (~10 ms cada 500 ms = 2% del tiempo)
+  digitalWrite(PIN_AGUA_VCC, HIGH);
+  delay(T_ESTABILIZA_AGUA);            // estabilización de la señal
+  analogRead(PIN_AGUA);                // lectura descartada (asienta el ADC)
   int lectura = analogRead(PIN_AGUA);
+  digitalWrite(PIN_AGUA_VCC, LOW);     // apagar el sensor
   //Serial.print(F("Sensor agua (raw): ")); Serial.println(lectura);  // descomentar para calibrar
  
   // Histéresis: activa con UMBRAL_ON, desactiva con UMBRAL_OFF
