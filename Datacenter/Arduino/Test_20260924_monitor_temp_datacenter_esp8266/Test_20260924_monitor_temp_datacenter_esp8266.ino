@@ -25,8 +25,8 @@
 #ifdef UBICACION_REFRIGERACION
   const char* TOPIC_TEMP   = "datacenter/refrigeracion/temperatura";
   const char* TOPIC_HUM    = "datacenter/refrigeracion/humedad";
-  const char* TOPIC_PROBLEM = "datacenter/refrigeracion/problemas";
-  const char* MQTT_PAYLOAD = "UMBRAL";
+  const char* TOPIC_PROBLEM = "datacenter/refrigeracion/problemas";  //Este tópico sirve para avisar cuando se superó el umbral de temperatura
+  const char* MQTT_PAYLOAD = "UMBRAL";    // Este payload se envia con el TOPIC_PROBLEM
   const char* DEVICE_ID    = "ESP8266-Refrigeracion";
 #endif
 
@@ -39,20 +39,20 @@
 // ---------------------------------------------------------------------------
 // CONFIGURACION DE RED Y MQTT
 // ---------------------------------------------------------------------------
-//const char* WIFI_SSID     = "datacenter";
-//const char* WIFI_PASSWORD = "NOv22$1nicI0";
-const char* WIFI_SSID     = "247IASbrosHA";
-const char* WIFI_PASSWORD = "GBxT0K6be99GmznHfUb247$!";
+const char* WIFI_SSID     = "datacenter";
+const char* WIFI_PASSWORD = "NOv22$1nicI0";
+//const char* WIFI_SSID     = "247IASbrosHA";
+//const char* WIFI_PASSWORD = "GBxT0K6be99GmznHfUb247$!";
 
 //const char* MQTT_SERVER   = "172.16.16.27";  // IP del broker MQTT / Home Assistant Datacenter
-//const char* MQTT_SERVER   = "172.16.16.98";  // IP del broker MQTT / Home Assistant Testing Datacenter
-//const int   MQTT_PORT     = 1883;
-//const char* MQTT_USER     = "adminmqtt";                // dejar "" si el broker no requiere autenticacion
-//const char* MQTT_PASS     = "Ia$247";
-const char* MQTT_SERVER   = "192.168.55.150";  // IP del broker MQTT / Home Assistant BºNORTE
+const char* MQTT_SERVER   = "172.16.16.98";  // IP del broker MQTT / Home Assistant Testing Datacenter
 const int   MQTT_PORT     = 1883;
-const char* MQTT_USER     = "usermqtt";           // dejar "" si el broker no requiere autenticacion
+const char* MQTT_USER     = "adminmqtt";                // dejar "" si el broker no requiere autenticacion
 const char* MQTT_PASS     = "Ia$247";
+//const char* MQTT_SERVER   = "192.168.55.150";  // IP del broker MQTT / Home Assistant BºNORTE
+//const int   MQTT_PORT     = 1883;
+//const char* MQTT_USER     = "usermqtt";           // dejar "" si el broker no requiere autenticacion
+//const char* MQTT_PASS     = "Ia$247";
 
 // ---------------------------------------------------------------------------
 // CONFIGURACION DE PINES (GPIO) - NodeMCU ESP8266
