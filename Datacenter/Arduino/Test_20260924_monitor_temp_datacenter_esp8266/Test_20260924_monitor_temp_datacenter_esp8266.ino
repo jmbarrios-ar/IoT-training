@@ -44,8 +44,8 @@ const char* WIFI_PASSWORD = "NOv22$1nicI0";
 //const char* WIFI_SSID     = "247IASbrosHA";
 //const char* WIFI_PASSWORD = "GBxT0K6be99GmznHfUb247$!";
 
-//const char* MQTT_SERVER   = "172.16.16.27";  // IP del broker MQTT / Home Assistant Datacenter
-const char* MQTT_SERVER   = "172.16.16.98";  // IP del broker MQTT / Home Assistant Testing Datacenter
+const char* MQTT_SERVER   = "172.16.16.27";  // IP del broker MQTT / Home Assistant Datacenter
+//const char* MQTT_SERVER   = "172.16.16.98";  // IP del broker MQTT / Home Assistant Testing Datacenter
 const int   MQTT_PORT     = 1883;
 const char* MQTT_USER     = "adminmqtt";                // dejar "" si el broker no requiere autenticacion
 const char* MQTT_PASS     = "Ia$247";
