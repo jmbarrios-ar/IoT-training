@@ -5,17 +5,18 @@
 // Hardware: HC-SR501 OUT -> GPIO27; relay IN -> GPIO25; connect grounds.
 constexpr uint8_t PIR_PIN = 27;
 constexpr uint8_t RELAY_PIN = 25;
-constexpr bool RELAY_ACTIVE_LOW = true; // Set false for an active-HIGH relay board.
-constexpr uint32_t LIGHT_ON_MS = 120000UL;
+constexpr bool RELAY_ACTIVE_LOW = false; // Set false for an active-HIGH relay board.
+//constexpr uint32_t LIGHT_ON_MS = 120000UL;
+constexpr uint32_t LIGHT_ON_MS = 30000UL;
 constexpr uint32_t STATE_PUBLISH_INTERVAL_MS = 5000UL;
 
 // Replace these values with the credentials and broker address on your LAN.
-const char *WIFI_SSID = "TU_WIFI";
-const char *WIFI_PASSWORD = "TU_CLAVE_WIFI";
-const char *MQTT_HOST = "192.168.1.10"; // Home Assistant / MQTT broker IP
+const char *WIFI_SSID = "247IASbrosHA";
+const char *WIFI_PASSWORD = "GBxT0K6be99GmznHfUb247$!";
+const char *MQTT_HOST = "192.168.55.150"; // Home Assistant / MQTT broker IP
 constexpr uint16_t MQTT_PORT = 1883;
-const char *MQTT_USER = "TU_USUARIO_MQTT"; // Use "" if broker allows anonymous access.
-const char *MQTT_PASSWORD = "TU_CLAVE_MQTT";
+const char *MQTT_USER = "usermqtt"; // Use "" if broker allows anonymous access.
+const char *MQTT_PASSWORD = "Ia$247";
 
 const char *COMMAND_TOPIC = "casa/iluminacion/pasillo";
 const char *STATE_TOPIC = "casa/iluminacion/pasillo/estado";
