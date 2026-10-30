@@ -24,10 +24,10 @@ const uint8_t PIN_AGUA_VCC = 7; // Alimentación (+) del sensor de agua: se enci
  
 // ********** ETHERNET *********************************
 // IMPORTANTE: cada Arduino de la red debe tener una MAC distinta (Test y Producción).
-//byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };  // Datacenter produccion
-byte mac[] = { 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };  // Datacenter testing
-//IPAddress ip(172, 16, 16, 41);     // Datacenter - Arduino UNO producción
-IPAddress ip(172, 16, 16, 141);    // Datacenter - Arduino UNO Test
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };  // Datacenter produccion
+//byte mac[] = { 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };  // Datacenter testing
+IPAddress ip(172, 16, 16, 41);     // Datacenter - Arduino UNO producción
+//IPAddress ip(172, 16, 16, 141);    // Datacenter - Arduino UNO Test
 //IPAddress ip(192, 168, 55, 124);     // Barrio NORTE - Arduino UNO Test
 IPAddress gateway(172, 16, 16, 16);// Datacenter
 //IPAddress gateway(192, 168, 55, 1);  // Barrio NORTE
@@ -36,8 +36,8 @@ IPAddress dnServer(8, 8, 8, 8);
 bool usandoDHCP = true;
  
 // ********** MQTT *********************************
-//const char *mqtt_server = "172.16.16.27";   // Datacenter
-const char *mqtt_server = "172.16.16.98";   // Datacenter Test
+const char *mqtt_server = "172.16.16.27";   // Datacenter producción
+//const char *mqtt_server = "172.16.16.98";   // Datacenter Test
 //const char *mqtt_server = "192.168.55.150";   // Barrio NORTE
 const int   mqtt_port   = 1883;
 const char *mqtt_user   = "adminmqtt";   // Datacenter
