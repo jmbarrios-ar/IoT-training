@@ -34,10 +34,15 @@ unsigned long debounceDelay = 50;
 
 void setup_wifi() {
   delay(10);
+  Serial.print("Conectando a WiFi");
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
+    Serial.print(".");
   }
+  Serial.println();
+  Serial.print("WiFi conectado. IP: ");
+  Serial.println(WiFi.localIP());
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -60,9 +65,12 @@ void callback(char* topic, byte* payload, unsigned int length) {
 void reconnect() {
   while (!client.connected()) {
     if (client.connect("ESP32C3_Dormitorio", mqtt_user, mqtt_pass)) {
+      Serial.println("Conectado al broker MQTT.");
       client.subscribe(command_topic);
       client.publish(state_topic, lightState ? "ON" : "OFF");
     } else {
+      Serial.print("Fallo MQTT, estado: ");
+      Serial.println(client.state());
       delay(5000);
     }
   }
@@ -74,6 +82,7 @@ void updateRelay() {
 }
 
 void setup() {
+  Serial.begin(115200);
   pinMode(RELAY_PIN, OUTPUT);
   pinMode(SWITCH_PIN, INPUT_PULLUP); // Resistencia interna activada
   
